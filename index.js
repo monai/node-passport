@@ -39,11 +39,11 @@ function connect(reader, done) {
       console.error(err);
     } else {
       console.log('protocol', protocol);
-      getChallenge(reader, protocol, (err, bacKeys) => {
+      getChallenge(reader, protocol, (err, res) => {
         if (err) {
           done(err);
         } else {
-          done(null, bacKeys);
+          done(null, res);
         }
       });
     }
