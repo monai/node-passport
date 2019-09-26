@@ -51,10 +51,14 @@ function connect(reader, done) {
 }
 
 function getChallenge(reader, protocol, done) {
-  const data = Buffer.from([0x00, 0x84, 0x00, 0x00, 0x08]);
-  reader.transmit(data, 10, protocol, function (err, data) {
-    console.log(err, data);
+  // GET CHALLENGE
+  const message = Buffer.from([0x00, 0x84, 0x00, 0x00, 0x08]);
+  reader.transmit(message, 10, protocol, function (err, challenge) {
+    crypto.randomBytes(24, (err, rnd) => {
+      const bacKeys = authentication(challenge, rnd, dbak(kmrz));
 
-    authentication(data, dbak(kmrz), done);
+      console.log(bacKeys)
+      done();
+    });
   });
 }
