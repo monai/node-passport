@@ -1,0 +1,15 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "EU passport playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "monai",
+  "license": "ISC",
+  "dependencies": {
+    "pcsclite": "^1.0.0",
+    "stream-util2": "^1.0.0"
+  }
+}
