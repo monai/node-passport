@@ -3,6 +3,7 @@ const { authentication } = require('./lib/doc9309/bac');
 const { mac } = require('./lib/iso9797');
 
 const mrzk = 'L898902C<369080619406236';
+console.log('mrzk:', mrzk);
 
 const keys = dbak(mrzk);
 const [kEnc, kMac] = keys;
