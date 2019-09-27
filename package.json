@@ -9,6 +9,7 @@
   "author": "monai",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.1.0",
     "cryptian": "0.0.3",
     "pcsclite": "^1.0.0",
     "stream-util2": "^1.0.0"
