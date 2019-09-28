@@ -11,13 +11,11 @@ console.log('kEnc:', kEnc.toString('hex'));
 console.log('kMac:', kMac.toString('hex'));
 console.log('---');
 
-const challenge = Buffer.from('4608F91988702212', 'hex');
-const rnd = Buffer.concat([
-  Buffer.from('781723860C06C226', 'hex'),
-  Buffer.from('0B795240CB7049B01C19B33E32804F0B', 'hex'),
-]);
+const rndIc = Buffer.from('4608F91988702212', 'hex');
+const rndIfd = Buffer.from('781723860C06C226', 'hex');
+const kIfd = Buffer.from('0B795240CB7049B01C19B33E32804F0B', 'hex');
 
-const authKeys = authentication(challenge, rnd, keys);
+const authKeys = authentication(keys, rndIc, rndIfd, kIfd);
 const [eIfd, mIfd] = authKeys;
 console.log('eIfd:', eIfd.length, eIfd.toString('hex'));
 console.log('mIfd:', mIfd.length, mIfd.toString('hex'));

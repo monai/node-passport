@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const pcsc = require('pcsclite');
 const async = require('async');
 
-const { authentication } = require('./lib/doc9309/bac');
+const { authentication, computeSessionKeys } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
 
 const kmrz = process.env.KMRZ;
@@ -44,8 +44,10 @@ function connect(reader, done) {
       async.waterfall([
         setApplication(reader, protocol),
         getChallenge(reader, protocol),
+        computeKeys,
         authenticate,
-        externalAuthenticate(reader, protocol)
+        externalAuthenticate(reader, protocol),
+        deriveKeys
       ], done);
     }
   });
@@ -70,12 +72,12 @@ function getChallenge(reader, protocol) {
   return (options, done) => {
     // GET CHALLENGE
     const message = Buffer.from([0x00, 0x84, 0x00, 0x00, 0x08]);
-    reader.transmit(message, 10, protocol, function (err, challenge) {
+    reader.transmit(message, 10, protocol, function (err, res) {
       if (err) {
         done(err);
       } else {
         options.bac = {
-          challenge
+          rndIc: res.slice(0, 8)
         };
         done(null, options);
       }
@@ -83,12 +85,22 @@ function getChallenge(reader, protocol) {
   };
 }
 
+function computeKeys(options, done) {
+  options.bac.keys = dbak(kmrz);
+  done(null, options);
+}
+
 function authenticate(options, done) {
   crypto.randomBytes(24, (err, rnd) => {
     if (err) {
       done(err);
     } else {
-      options.bac.keysIfd = authentication(options.bac.challenge, rnd, dbak(kmrz));
+      const rndIfd = rnd.slice(0, 8);
+      const kIfd = rnd.slice(8, 24);
+      Object.assign(options.bac, { rndIfd, kIfd });
+
+      const { keys, rndIc } = options.bac;
+      options.bac.keysIfd = authentication(keys, rndIc, rndIfd, kIfd);
       done(null, options);
     }
   });
@@ -105,10 +117,6 @@ function externalAuthenticate(reader, protocol) {
     ]);
 
     const [eIfd, mIfd] = options.bac.keysIfd;
-    console.log('payload', payload.length, payload.toString('hex'));
-    console.log('eIfd:', eIfd.length, eIfd.toString('hex'));
-    console.log('mIfd:', mIfd.length, mIfd.toString('hex'));
-    console.log('message:', message.length, message.toString('hex'));
 
     reader.transmit(message, 42, protocol, (err, res) => {
       if (err) {
@@ -119,4 +127,15 @@ function externalAuthenticate(reader, protocol) {
       }
     });
   };
+}
+
+function deriveKeys(options, done) {
+  const [ksEnc, ksMac, ssc] = computeSessionKeys(options);
+  options.bac.session = {
+    ksEnc,
+    ksMac,
+    ssc,
+  };
+
+  done(null, options);
 }
