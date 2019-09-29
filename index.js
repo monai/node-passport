@@ -4,6 +4,8 @@ const async = require('async');
 
 const { authentication, computeSessionKeys } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
+const APDU = require('./lib/doc9309/apdu');
+const { protect, unprotect } = require('./lib/doc9309/secure');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
@@ -47,7 +49,8 @@ function connect(reader, done) {
         computeKeys,
         authenticate,
         externalAuthenticate(reader, protocol),
-        deriveKeys
+        deriveKeys,
+        readFile(reader, protocol)
       ], done);
     }
   });
@@ -55,6 +58,7 @@ function connect(reader, done) {
 
 function setApplication(reader, protocol) {
   return (done) => {
+    // SELECT application
     const message = Buffer.from('00a4040c07A0000002471001', 'hex');
     reader.transmit(message, 2, protocol, (err, res) => {
       if (err) {
@@ -138,4 +142,19 @@ function deriveKeys(options, done) {
   };
 
   done(null, options);
+}
+
+function readFile(reader, protocol) {
+  return (options, done) => {
+    const cmdData = Buffer.from('011e', 'hex');
+    const apdu = new APDU(0x00, 0xa4, 0x02, 0x0c, { data: cmdData });
+    const protected = protect(options.bac.session, apdu);
+    console.log('protected', protected.toBuffer().toString('hex'));
+
+    reader.transmit(protected.toBuffer(), 16, protocol, (err, res) => {
+      console.log(err, res);
+
+      done(null, options)
+    });
+  };
 }
