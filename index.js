@@ -4,8 +4,8 @@ const async = require('async');
 
 const { authentication, computeSessionKeys } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const APDU = require('./lib/doc9309/apdu');
-const { protect, unprotect } = require('./lib/doc9309/secure');
+const { CommandAPDU, ResponseAPDU } = require('./lib/doc9309/apdu');
+const { protect, unprotect, asn1Length } = require('./lib/doc9309/secure');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
@@ -147,14 +147,46 @@ function deriveKeys(options, done) {
 function readFile(reader, protocol) {
   return (options, done) => {
     const cmdData = Buffer.from('011e', 'hex');
-    const apdu = new APDU(0x00, 0xa4, 0x02, 0x0c, { data: cmdData });
+    const apdu = new CommandAPDU(0x00, 0xa4, 0x02, 0x0c, { data: cmdData });
     const protected = protect(options.bac.session, apdu);
-    console.log('protected', protected.toBuffer().toString('hex'));
 
     reader.transmit(protected.toBuffer(), 16, protocol, (err, res) => {
-      console.log(err, res);
-
-      done(null, options)
+      if (err) {
+        done(err);
+      } else {
+        const unprotected = unprotect(options.bac.session, new ResponseAPDU(res));
+        let offset = 0;
+        readBinary(reader, protocol, options.bac.session, offset, 4, (err, res) => {
+          if (err) {
+            done(err);
+          } else {
+            done(null, options);
+          }
+        });
+      }
     });
   };
+}
+
+function readBinary(reader, protocol, session, offset, le, done) {
+  const p1 = offset >>> 8;
+  const p2 = offset & 0xff;
+  const apdu = new CommandAPDU(0x00, 0xb0, p1, p2, { le });
+  const protected = protect(session, apdu);
+
+  reader.transmit(protected.toBuffer(), 40, protocol, (err, res) => {
+    if (err) {
+      done(null, err);
+    } else {
+      const unprotected = unprotect(session, new ResponseAPDU(res));
+
+      const [bodySize, o] = asn1Length(unprotected.data.slice(1));
+      const offset = o + 1;
+
+      const header = unprotected.data.slice(0, offset);
+      console.log(bodySize, offset, header);
+
+      done(null);
+    }
+  });
 }
