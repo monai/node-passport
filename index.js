@@ -16,7 +16,7 @@ async function work() {
 
   try {
     await reader.waitForCard();
-    await reader.connect();
+    await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
     await selectApplication(reader);
     const session = await performBac(reader, dbak(kmrz));
