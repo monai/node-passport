@@ -1,11 +1,11 @@
-const fs = require('fs');
 const Reader = require('./lib/reader');
 const selectApplication = require('./lib/doc9309/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const { readFileSelect, readFileSfi } = require('./lib/doc9309/readFile');
+const { createReadStream } = require('./lib/doc9309/readFile');
 const SecureReader = require('./lib/secureReader');
 const decodeFile = require('./lib/decodeFile');
+const stream = require('stream-util2');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
@@ -27,17 +27,25 @@ async function work() {
     // const fileSelect = await readFileSelect(sreader, '011e');
     // console.log(fileSelect);
 
-    const fileSfi = await readFileSfi(sreader, 0x1e);
-    decodeFile(fileSfi);
+    // const fileSfi = await readFileSfi(sreader, 0x1e);
+    // decodeFile(fileSfi);
 
     // const dg01 = await readFileSfi(sreader, 0x01);
     // console.log(dg01);
     // console.log(dg01.toString());
 
     // const dg02 = await readFileSfi(sreader, 0x02);
-    // fs.writeFileSync('photo.jpg', dg02);
     // console.log(dg02);
-    // console.log(dg02.toString());
+
+    const dg02 = createReadStream({
+      sreader,
+      sfi: 0x02,
+      // fileId: '0102',
+      // mode: 'select',
+    });
+    dg02
+    .pipe(stream.consoleLog())
+    .pipe(stream.writeVoid());
 
     // const dg03 = await readFileSfi(sreader, 0x03);
     // console.log(dg03);
