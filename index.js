@@ -24,22 +24,8 @@ async function work() {
     const session = await performBac(reader, dbak(kmrz));
     const sreader = new SecureReader(reader, session);
 
-    // const fileSelect = await readFileSelect(sreader, '011e');
-    // console.log(fileSelect);
-
-    // const fileSfi = await readFileSfi(sreader, 0x1e);
-    // decodeFile(fileSfi);
-
-    // const dg01 = await readFileSfi(sreader, 0x01);
-    // console.log(dg01);
-    // console.log(dg01.toString());
-
-    // const dg02 = await readFileSfi(sreader, 0x02);
-    // console.log(dg02);
-
-    const dg15 = await readFile({ sreader, sfi: 0xff });
-
-    console.log('ok', dg15);
+    const dg14 = await readFile({ sreader, sfi: 0x0e });
+    console.log(dg14);
 
   } catch (ex) {
     console.error(ex);
