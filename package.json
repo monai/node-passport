@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "pcsclite": "https://github.com/jimmythesaint82/node-pcsclite.git#node_12_changes",
-    "stream-util2": "^1.0.0"
+    "stream-util2": "^1.0.0",
+    "xstate": "^4.6.7"
   }
 }
