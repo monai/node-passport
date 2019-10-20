@@ -2,7 +2,7 @@ const Reader = require('./lib/reader');
 const selectApplication = require('./lib/doc9309/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const { createReadStream } = require('./lib/doc9309/readFile');
+const { createReadStream, readFile } = require('./lib/doc9309/readFile');
 const SecureReader = require('./lib/secureReader');
 const decodeFile = require('./lib/decodeFile');
 const stream = require('stream-util2');
@@ -37,27 +37,9 @@ async function work() {
     // const dg02 = await readFileSfi(sreader, 0x02);
     // console.log(dg02);
 
-    const dg02 = createReadStream({
-      sreader,
-      sfi: 0x02,
-      // fileId: '0102',
-      // mode: 'select',
-    });
-    dg02
-    .pipe(stream.consoleLog())
-    .pipe(stream.writeVoid());
+    const dg15 = await readFile({ sreader, sfi: 0xff });
 
-    // const dg03 = await readFileSfi(sreader, 0x03);
-    // console.log(dg03);
-    // console.log(dg03.toString());
-
-    // const dg11 = await readFileSfi(sreader, 0x0b);
-    // console.log(dg11);
-    // console.log(dg11.toString());
-
-    // const dg14 = await readFileSfi(sreader, 0x0e);
-    // console.log(dg14);
-    // console.log(dg14.toString());
+    console.log('ok', dg15);
 
   } catch (ex) {
     console.error(ex);
