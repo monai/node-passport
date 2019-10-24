@@ -1,11 +1,9 @@
 const Reader = require('./lib/reader');
-const selectApplication = require('./lib/doc9309/selectApplication');
+const selectApplication = require('./lib/iso7816/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
 const { readFile } = require('./lib/doc9309/readFile');
 const SecureReader = require('./lib/secureReader');
-
-const { CommandAPDU } = require('./lib/doc9309/apdu');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
@@ -20,7 +18,7 @@ async function work() {
     await reader.waitForCard();
     await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
-    await selectApplication(reader);
+    await selectApplication(reader, 'A0000002471001');
     const session = await performBac(reader, dbak(kmrz));
     const sreader = new SecureReader(reader, session);
 
