@@ -2,10 +2,10 @@ const Reader = require('./lib/reader');
 const selectApplication = require('./lib/doc9309/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const { createReadStream, readFile } = require('./lib/doc9309/readFile');
+const { readFile } = require('./lib/doc9309/readFile');
 const SecureReader = require('./lib/secureReader');
-const decodeFile = require('./lib/decodeFile');
-const stream = require('stream-util2');
+
+const { CommandAPDU } = require('./lib/doc9309/apdu');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
