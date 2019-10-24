@@ -2,7 +2,7 @@ const Reader = require('./lib/reader');
 const selectApplication = require('./lib/iso7816/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const { readFile } = require('./lib/iso7816/readFile');
+const { readFile } = require('./lib/readFile');
 const SimpleReader = require('./lib/simpleReader');
 const SecureReader = require('./lib/secureReader');
 
@@ -21,6 +21,7 @@ async function work() {
     await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
     await selectApplication(simpleReader, 'A0000002471001');
+
     const session = await performBac(reader, dbak(kmrz));
     const sreader = new SecureReader(reader, session);
 
