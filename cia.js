@@ -15,7 +15,7 @@ async function work() {
     await reader.waitForCard();
     await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
-    await selectApplication(reader, 'E828BD080F');
+    await selectApplication(sreader, 'E828BD080F');
 
     const res = await readFile({ reader: sreader, sfi: 0x12 });
     console.log(res);
