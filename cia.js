@@ -1,6 +1,6 @@
 const Reader = require('./lib/reader');
 const selectApplication = require('./lib/iso7816/selectApplication');
-const { readFile } = require('./lib/iso7816/readFile');
+const { readFile } = require('./lib/readFile');
 const SimpleReader = require('./lib/simpleReader');
 const stream = require('stream-util2');
 
