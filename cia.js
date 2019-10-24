@@ -1,10 +1,7 @@
 const Reader = require('./lib/reader');
-const selectApplication = require('./lib/iso7816/selectApplication');
-const { readFile } = require('./lib/readFile');
 const SimpleReader = require('./lib/simpleReader');
-const stream = require('stream-util2');
-
-const { CommandApdu } = require('./lib/iso7816/apdu');
+const { readFile } = require('./lib/readFile');
+const selectApplication = require('./lib/iso7816/selectApplication');
 
 work();
 async function work() {
