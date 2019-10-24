@@ -2,7 +2,7 @@ const Reader = require('./lib/reader');
 const selectApplication = require('./lib/iso7816/selectApplication');
 const { performBac } = require('./lib/doc9309/bac');
 const { dbak } = require('./lib/doc9309/dbak');
-const { readFile } = require('./lib/doc9309/readFile');
+const { readFile } = require('./lib/iso7816/readFile');
 const SecureReader = require('./lib/secureReader');
 
 const kmrz = process.env.KMRZ;
@@ -22,7 +22,7 @@ async function work() {
     const session = await performBac(reader, dbak(kmrz));
     const sreader = new SecureReader(reader, session);
 
-    const dg14 = await readFile({ sreader, sfi: 0x0e });
+    const dg14 = await readFile({ reader: sreader, sfi: 0x0e });
     console.log(dg14);
 
   } catch (ex) {
