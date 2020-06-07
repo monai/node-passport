@@ -4,7 +4,7 @@
   "description": "EU passport playground",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap -R specy lib/**/__test__"
   },
   "author": "monai",
   "license": "ISC",
@@ -12,5 +12,8 @@
     "pcsclite": "https://github.com/jimmythesaint82/node-pcsclite.git#node_12_changes",
     "stream-util2": "^1.0.0",
     "xstate": "^4.10.0"
+  },
+  "devDependencies": {
+    "tap": "^14.10.7"
   }
 }
