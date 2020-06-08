@@ -1,6 +1,6 @@
 const Reader = require('./lib/reader');
 const selectApplication = require('./lib/iso7816/selectApplication');
-const { performBac } = require('./lib/doc9309/bac');
+const performBac = require('./lib/doc9309/performBac');
 const { computeDbaks } = require('./lib/doc9309/dbak');
 const { readFile } = require('./lib/readFile');
 const SimpleReader = require('./lib/simpleReader');
