@@ -5,8 +5,8 @@ const { computeDbaks } = require('./lib/doc9309/dbak');
 const { readFile } = require('./lib/readFile');
 const SimpleReader = require('./lib/simpleReader');
 const SecureReader = require('./lib/secureReader');
-const type = require('./lib/doc9309/type');
-const { createInspector } = require('./lib/inspect');
+const parse = require('./lib/asn1/parse');
+const inspect = require('./lib/asn1/inspect');
 
 const kmrz = process.env.KMRZ;
 if ( ! kmrz) {
@@ -29,11 +29,8 @@ async function work() {
 
     const res = await readFile({ reader: sreader, sfi: 0x01 });
 
-    const inspect = createInspector({
-      type,
-    });
-
-    inspect(res);
+    const tree = parse(res);
+    console.log(inspect(tree, { colors: true }));
   } catch (ex) {
     console.error(ex);
   }
