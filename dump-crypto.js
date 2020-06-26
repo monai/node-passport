@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const Reader = require('./lib/reader');
 const SimpleReader = require('./lib/simpleReader');
 const parse = require('./lib/asn1/parse');
@@ -25,7 +26,8 @@ async function work() {
 
     // E828BD080F D61659903701 4352595054
 
-    let res, aid;
+    let res;
+    let aid;
 
     res = await select(simpleReader, 0x02, 0x04, { data: '5032', bl: 0xff });
     printResOrError(res);
@@ -129,7 +131,6 @@ async function work() {
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0xb18, 0x013b);
     printResOrError(res);
-
   } catch (ex) {
     console.error(ex);
   }
