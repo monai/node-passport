@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-throw-literal */
 const Reader = require('./lib/reader');
 const select = require('./lib/iso7816/select');
 const performBac = require('./lib/doc9309/performBac');
@@ -9,7 +11,7 @@ const parse = require('./lib/asn1/parse');
 const inspect = require('./lib/asn1/inspect');
 
 const kmrz = process.env.KMRZ;
-if ( ! kmrz) {
+if (!kmrz) {
   throw 'Environment variable KMRZ is not defined';
 }
 
@@ -35,5 +37,3 @@ async function work() {
     console.error(ex);
   }
 }
-
-
