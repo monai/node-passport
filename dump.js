@@ -10,6 +10,8 @@ const SecureReader = require('./lib/secureReader');
 const parse = require('./lib/asn1/parse');
 const inspect = require('./lib/asn1/inspect');
 
+require('dotenv').config();
+
 const kmrz = process.env.KMRZ;
 if (!kmrz) {
   throw 'Environment variable KMRZ is not defined';
