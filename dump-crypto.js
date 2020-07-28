@@ -23,6 +23,8 @@ async function work() {
     // D61659903701 - D national
     // 5349474E31 SIGN1 - iso
     // 4352595054 CRYPT - pix
+    // 524f4f5400 ROOT\x00
+    // 43525950544f3100 CRYPTO1\x00
 
     // E828BD080F D61659903701 4352595054
 
