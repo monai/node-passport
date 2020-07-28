@@ -28,6 +28,7 @@ async function work() {
 
     let res;
     let aid;
+    let buffer;
 
     res = await select(simpleReader, 0x02, 0x04, { data: '5032', bl: 0xff });
     printResOrError(res);
@@ -84,61 +85,77 @@ async function work() {
     printResOrError(res);
 
     // 0x058c - magic
+    buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
+
+    printBer(Buffer.concat(buffer));
 
     console.log('select 5400');
     res = await select(simpleReader, 0x02, 0x04, { data: '5400', bl: 0xff });
     printResOrError(res);
 
+    buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
+
+    printBer(Buffer.concat(buffer));
 
     console.log('select 5600');
     res = await select(simpleReader, 0x02, 0x04, { data: '5600', bl: 0xff });
     printResOrError(res);
 
+    buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
+
+    printBer(Buffer.concat(buffer));
 
     console.log('select 5701');
     res = await select(simpleReader, 0x02, 0x04, { data: '5701', bl: 0xff });
     printResOrError(res);
 
+    buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
 
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0x058c, 0x058c);
-    printResOrError(res);
+    buffer.push(res.toBuffer());
 
     console.log('read binary l:0x058c');
-    res = await readBinary(simpleReader, 0xb18, 0x013b);
-    printResOrError(res);
+    res = await readBinary(simpleReader, 0x0b18, 0x013b);
+    buffer.push(res.toBuffer());
+
+    printBer(Buffer.concat(buffer));
   } catch (ex) {
     console.error(ex);
   }
 }
 
-function printRes(res) {
-  const tree = parse(res.toBuffer());
+function printBer(data) {
+  const tree = parse(data);
   console.log(inspect(tree, { depth: 20, colors: true }));
+}
+
+function printRes(res) {
+  printBer(res.toBuffer());
 }
 
 function printResOrError(res) {
