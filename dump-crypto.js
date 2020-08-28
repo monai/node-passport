@@ -61,6 +61,7 @@ async function work() {
     res = await select(simpleReader, 0x02, 0x04, { data: '0101', bl: 0xff });
     printResOrError(res);
 
+    // CAN
     console.log('read binary l:0x08');
     res = await readBinary(simpleReader, 0, 0x08);
     printResShort(res);
