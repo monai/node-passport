@@ -2,16 +2,16 @@
 const crypto = require('crypto');
 const { gm } = require('pace');
 
-const Reader = require('./lib/reader');
-const SimpleReader = require('./lib/simpleReader');
-const select = require('./lib/iso7816/select');
-const readBinary = require('./lib/iso7816/readBinary');
-const CommandApdu = require('./lib/iso7816/CommandApdu');
-const ControlParameters = require('./lib/iso7816/ControlParameters');
-const deriveKey = require('./lib/liteid/deriveKey');
-const { pad, mac } = require('./lib/iso9797');
-const { ab2aba, hex2buf } = require('./lib/util');
-const { assertSwOk, printResShort } = require('./lib/iso7816/util');
+const Reader = require('../lib/reader');
+const SimpleReader = require('../lib/simpleReader');
+const select = require('../lib/iso7816/select');
+const readBinary = require('../lib/iso7816/readBinary');
+const CommandApdu = require('../lib/iso7816/CommandApdu');
+const ControlParameters = require('../lib/iso7816/ControlParameters');
+const deriveKey = require('../lib/liteid/deriveKey');
+const { pad, mac } = require('../lib/iso9797');
+const { ab2aba, hex2buf } = require('../lib/util');
+const { assertSwOk, printResShort } = require('../lib/iso7816/util');
 
 work();
 async function work() {
