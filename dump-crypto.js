@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 const Reader = require('./lib/reader');
 const SimpleReader = require('./lib/simpleReader');
-const parse = require('./lib/asn1/parse');
-const inspect = require('./lib/asn1/inspect');
 const select = require('./lib/iso7816/select');
 const readBinary = require('./lib/iso7816/readBinary');
-const { Iso7816Error } = require('./lib/iso7816/error');
+const { printBer } = require('./lib/util');
+const { printResOrError, printResShort } = require('./lib/iso7816/util');
 
 work();
 async function work() {
@@ -150,26 +149,4 @@ async function work() {
   } catch (ex) {
     console.error(ex);
   }
-}
-
-function printBer(data) {
-  const tree = parse(data);
-  console.log(inspect(tree, { depth: 20, colors: true }));
-}
-
-function printRes(res) {
-  printBer(res.toBuffer());
-}
-
-function printResOrError(res) {
-  if (res.noError()) {
-    printRes(res);
-  } else {
-    console.log(new Iso7816Error(res.sw));
-  }
-  console.log('\n');
-}
-
-function printResShort(res) {
-  console.log(`${res.sw.toString('hex')} ${res.toBuffer().inspect()}\n`);
 }
