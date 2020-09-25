@@ -3,7 +3,7 @@
 const Reader = require('../lib/reader');
 const select = require('../lib/iso7816/select');
 const performBac = require('../lib/doc9309/performBac');
-const { computeDbaks } = require('../lib/doc9309/dbak');
+const { computeBacKeys } = require('../lib/doc9309/bac');
 const { readFile } = require('../lib/readFile');
 const SimpleReader = require('../lib/simpleReader');
 const SecureReader = require('../lib/secureReader');
@@ -28,7 +28,7 @@ async function work() {
 
     await select(simpleReader, 0x04, 0x0c, 'A0000002471001');
 
-    const session = await performBac(reader, computeDbaks(kmrz));
+    const session = await performBac(reader, computeBacKeys(kmrz));
     const sreader = new SecureReader(reader, session);
 
     const res = await readFile({ reader: sreader, sfi: 0x01 });
