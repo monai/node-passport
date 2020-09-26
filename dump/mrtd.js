@@ -31,7 +31,7 @@ async function work() {
     const session = await performBac(reader, computeBacKeys(kmrz));
     const sreader = new SecureReader(reader, session);
 
-    const res = await readFile({ reader: sreader, sfi: 0x01 });
+    const res = await readFile({ reader: sreader, shortFileId: 0x01 });
     const tree = parse(res);
 
     console.log(inspect(tree, { colors: true }));
