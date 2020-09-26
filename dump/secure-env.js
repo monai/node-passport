@@ -50,11 +50,11 @@ async function work() {
     res = await select(simpleReader, 0x02, 0x04, { data: '0101', bl: 0xff });
     assertSwOk(res);
 
-    const cp = new ControlParameters(res.toBuffer());
+    const cp = new ControlParameters(res.data);
     res = await readBinary(simpleReader, 0, cp.fileLength);
     assertSwOk(res);
 
-    const can = res.toBuffer();
+    const can = res.data;
     const nonceKey = ab2aba(deriveKey(can, 3));
 
     aid = ['D61659903701', '43525950544f3100'].join('');
@@ -94,7 +94,7 @@ async function work() {
     res = await simpleReader.transmit(apdu);
     assertSwOk(res);
 
-    const encryptedNonce = res.toBuffer().slice(4);
+    const encryptedNonce = res.data.slice(4);
     const encryptedNoncePad = pad(encryptedNonce);
 
     const decipher = crypto.createDecipheriv('des-ede3-cbc', nonceKey, Buffer.alloc(8));
@@ -120,7 +120,7 @@ async function work() {
     res = await simpleReader.transmit(apdu);
     assertSwOk(res);
 
-    const mapPkIc = res.toBuffer().slice(4);
+    const mapPkIc = res.data.slice(4);
     const generator = await gm.mapP(mapSkPcd, mapPkIc, nonce, 'prime256v1');
 
     // Step 3. Perform Key Agreement
@@ -134,7 +134,7 @@ async function work() {
     res = await simpleReader.transmit(apdu);
     assertSwOk(res);
 
-    const ephPkIc = res.toBuffer().slice(4);
+    const ephPkIc = res.data.slice(4);
     if (ephPkIc.equals(ephPkPcd)) {
       throw new Error('PCD and IC ephemeral keys are equal');
     }

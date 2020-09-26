@@ -90,11 +90,11 @@ async function work() {
     buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     printBer(Buffer.concat(buffer));
 
@@ -105,11 +105,11 @@ async function work() {
     buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     printBer(Buffer.concat(buffer));
 
@@ -120,11 +120,11 @@ async function work() {
     buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     console.log('read binary l:0x74');
     res = await readBinary(simpleReader, 0x058c, 0x74);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     printBer(Buffer.concat(buffer));
 
@@ -135,15 +135,15 @@ async function work() {
     buffer = [];
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0, 0x058c);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0x058c, 0x058c);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     console.log('read binary l:0x058c');
     res = await readBinary(simpleReader, 0x0b18, 0x013b);
-    buffer.push(res.toBuffer());
+    buffer.push(res.data);
 
     printBer(Buffer.concat(buffer));
   } catch (ex) {
