@@ -14,18 +14,20 @@
   "dependencies": {
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^8.2.0",
-    "moment": "^2.27.0",
-    "stream-util2": "^1.0.0",
-    "xstate": "^4.10.0"
+    "moment": "^2.29.0",
+    "pace": "../node-pace",
+    "readable-stream": "^3.6.0",
+    "stream-util2": "^1.2.0",
+    "xstate": "^4.13.0"
   },
   "devDependencies": {
     "@monai/eslint-config-base": "0.0.3",
     "@monai/eslint-config-node": "0.0.3",
     "@monai/eslint-config-style": "0.0.3",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.3.1",
+    "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "tap": "^14.10.7"
   }
