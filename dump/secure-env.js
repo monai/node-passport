@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const crypto = require('crypto');
-const { gm } = require('pace');
+const { ecdh } = require('pace');
 
 const Reader = require('../lib/reader');
 const SimpleReader = require('../lib/simpleReader');
@@ -121,10 +121,10 @@ async function work() {
     assertSwOk(res);
 
     const mapPkIc = res.data.slice(4);
-    const generator = await gm.mapP(mapSkPcd, mapPkIc, nonce, 'prime256v1');
+    const generator = await ecdh.gm.mapP(mapSkPcd, mapPkIc, nonce, 'prime256v1');
 
     // Step 3. Perform Key Agreement
-    const [ephPkPcd, ephSkPcd] = await gm.generateKeysP(generator, 'prime256v1');
+    const [ephPkPcd, ephSkPcd] = await ecdh.gm.generateKeysP(generator, 'prime256v1');
 
     console.log('-> 7C 83');
     data = Buffer.concat([hex2buf`7c438341`, ephPkPcd]);
