@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "EU passport playground",
   "main": "index.js",
+  "bin": {
+    "decode-packet-dump": "./bin/decode.js"
+  },
   "scripts": {
     "test": "tap -R specy lib/**/__test__"
   },
