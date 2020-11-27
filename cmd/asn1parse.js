@@ -28,16 +28,14 @@ function main(argv) {
         chunk = Buffer.from(chunk.toString(), 'hex');
       }
 
-      console.log(
-        inspect(
-          parse(chunk),
-          {
-            depth: 20,
-            colors: true,
-            type: type(argv.type),
-          },
-        ),
-      );
+      const tree = parse(chunk);
+      const options = {
+        depth: 20,
+        colors: true,
+        type: type(argv.type),
+      };
+
+      console.log(inspect(tree, options));
 
       done();
     }));
