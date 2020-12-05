@@ -26,7 +26,7 @@ async function work() {
     await reader.waitForCard();
     await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
-    await select(simpleReader, 0x04, 0x0c, 'A0000002471001');
+    await select(simpleReader, 0x04, 0x0c, { data: 'A0000002471001' });
 
     const session = await performBac(reader, computeBacKeys(kmrz));
     const sreader = new SecureReader(reader, session);
