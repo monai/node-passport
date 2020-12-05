@@ -4,7 +4,7 @@ const Reader = require('../lib/reader');
 const select = require('../lib/iso7816/select');
 const performBac = require('../lib/doc9309/performBac');
 const { computeBacKeys } = require('../lib/doc9309/bac');
-const { readFile } = require('../lib/readFile');
+const readFile = require('../lib/readFile');
 const SimpleReader = require('../lib/simpleReader');
 const SecureReader = require('../lib/secureReader');
 const parse = require('../lib/asn1/parse');
@@ -31,7 +31,7 @@ async function work() {
     const session = await performBac(reader, computeBacKeys(kmrz));
     const sreader = new SecureReader(reader, session);
 
-    const res = await readFile({ reader: sreader, shortFileId: 0x01 });
+    const res = await readFile(sreader, { shortFileId: 0x01, le: 0xff });
     const tree = parse(res);
 
     console.log(inspect(tree, { colors: true }));
