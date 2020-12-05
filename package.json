@@ -20,8 +20,7 @@
     "moment": "^2.29.0",
     "pace": "../node-pace",
     "readable-stream": "^3.6.0",
-    "stream-util2": "^1.2.0",
-    "xstate": "^4.13.0"
+    "stream-util2": "^1.2.0"
   },
   "devDependencies": {
     "@monai/eslint-config-base": "0.0.3",
