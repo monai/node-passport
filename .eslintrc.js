@@ -43,7 +43,6 @@ module.exports = {
         },
       },
     ],
-    'unicorn/no-useless-undefined': 'off',
     'unicorn/number-literal-case': 'off',
   },
 };
