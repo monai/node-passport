@@ -4,7 +4,7 @@ const SimpleReader = require('../lib/simpleReader');
 const select = require('../lib/iso7816/select');
 const readBinary = require('../lib/iso7816/readBinary');
 const { printBer } = require('../lib/util');
-const { printResOrError, printResShort } = require('../lib/iso7816/util');
+const { printResponseOrError, printResponseShort } = require('../lib/iso7816/util');
 
 work();
 async function work() {
@@ -32,59 +32,59 @@ async function work() {
     let buffer;
 
     res = await select(simpleReader, 0x02, 0x04, { data: '5032', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     aid = ['E828BD080F', 'D61659903701', '4352595054'].join('');
     console.log('select', aid, Buffer.from(aid, 'hex').toString());
     res = await select(simpleReader, 0x04, 0x00, { data: aid, bl: 0xff });
-    printResShort(res);
+    printResponseShort(res);
 
     console.log('select 5032');
     res = await select(simpleReader, 0x02, 0x04, { data: '5032', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     console.log('read binary l:0x93');
     res = await readBinary(simpleReader, 0, 0x93);
-    printResOrError(res);
+    printResponseOrError(res);
 
     console.log('select 0101');
     res = await select(simpleReader, 0x02, 0x04, { data: '0101', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     aid = ['D61659903701', '524f4f5400'].join('');
     console.log('select', aid, Buffer.from(aid, 'hex').toString());
     res = await select(simpleReader, 0x04, 0x00, { data: aid, bl: 0xff });
-    printResShort(res);
+    printResponseShort(res);
 
     console.log('select 0101');
     res = await select(simpleReader, 0x02, 0x04, { data: '0101', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     // CAN
     console.log('read binary l:0x08');
     res = await readBinary(simpleReader, 0, 0x08);
-    printResShort(res);
+    printResponseShort(res);
 
     console.log('select 5300');
     res = await select(simpleReader, 0x02, 0x04, { data: '5300', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     aid = ['D61659903701', '43525950544f3100'].join('');
     console.log('select', aid, Buffer.from(aid, 'hex').toString());
     res = await select(simpleReader, 0x04, 0x00, { data: aid, bl: 0xff });
-    printResShort(res);
+    printResponseShort(res);
 
     console.log('select 5300');
     res = await select(simpleReader, 0x02, 0x04, { data: '5300', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     console.log('read binary l:0x01');
     res = await readBinary(simpleReader, 0, 0x01);
-    printResShort(res);
+    printResponseShort(res);
 
     console.log('select 5300');
     res = await select(simpleReader, 0x02, 0x04, { data: '5300', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     // 0x058c - magic
     buffer = [];
@@ -100,7 +100,7 @@ async function work() {
 
     console.log('select 5400');
     res = await select(simpleReader, 0x02, 0x04, { data: '5400', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     buffer = [];
     console.log('read binary l:0x058c');
@@ -115,7 +115,7 @@ async function work() {
 
     console.log('select 5600');
     res = await select(simpleReader, 0x02, 0x04, { data: '5600', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     buffer = [];
     console.log('read binary l:0x058c');
@@ -130,7 +130,7 @@ async function work() {
 
     console.log('select 5701');
     res = await select(simpleReader, 0x02, 0x04, { data: '5701', bl: 0xff });
-    printResOrError(res);
+    printResponseOrError(res);
 
     buffer = [];
     console.log('read binary l:0x058c');
