@@ -3,7 +3,6 @@ module.exports = {
     '@monai/base',
     '@monai/node',
     '@monai/style',
-    'plugin:unicorn/recommended',
   ],
   rules: {
     'no-bitwise': 'off',
@@ -29,23 +28,5 @@ module.exports = {
         devDependencies: ['**/__test__/**/*.js'],
       },
     ],
-    'unicorn/filename-case': [
-      'error',
-      {
-        cases: {
-          camelCase: true,
-          pascalCase: true,
-        },
-      },
-    ],
-    'unicorn/import-style': [
-      'error',
-      {
-        styles: {
-          util: false,
-        },
-      },
-    ],
-    'unicorn/number-literal-case': 'off',
   },
 };
