@@ -16,6 +16,7 @@ function main(argv) {
       alias: {
         hex: ['h'],
         type: ['t'],
+        force: ['f'],
       },
     },
   );
@@ -28,7 +29,7 @@ function main(argv) {
         chunk = Buffer.from(chunk.toString(), 'hex');
       }
 
-      const tree = parse(chunk);
+      const tree = parse(chunk, { force: argv.force });
       const options = {
         depth: 20,
         colors: true,
