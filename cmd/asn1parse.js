@@ -6,6 +6,7 @@ const minimist = require('minimist');
 const stream = require('stream-util2');
 const parse = require('../lib/asn1/parse');
 const inspect = require('../lib/asn1/inspect');
+const { noTail } = require('../lib/util');
 
 module.exports = main;
 
@@ -29,12 +30,17 @@ function main(argv) {
         chunk = Buffer.from(chunk.toString(), 'hex');
       }
 
-      const tree = parse(chunk, { force: argv.force });
+      let tree = parse(chunk, { force: argv.force });
+
       const options = {
         depth: 20,
         colors: true,
         type: type(argv.type),
       };
+
+      if (argv.tail === false) {
+        tree = noTail(tree);
+      }
 
       console.log(inspect(tree, options));
 
