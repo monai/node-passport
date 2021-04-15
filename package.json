@@ -13,7 +13,7 @@
   "author": "monai",
   "license": "ISC",
   "engines": {
-    "node": "12"
+    "node": "14"
   },
   "dependencies": {
     "@pokusew/pcsclite": "^0.6.0",
