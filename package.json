@@ -35,5 +35,8 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "tap": "^15.0.2"
+  },
+  "tap": {
+    "coverage-map": "test/map.js"
   }
 }
