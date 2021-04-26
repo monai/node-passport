@@ -18,7 +18,6 @@
   "dependencies": {
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^8.2.0",
-    "iconv-lite": "^0.6.2",
     "minimist": "^1.2.5",
     "pace": "../node-pace",
     "readable-stream": "^3.6.0",
