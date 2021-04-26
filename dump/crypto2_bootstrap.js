@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const Reader = require('../lib/reader');
-const SimpleReader = require('../lib/simpleReader');
+const SimpleReader = require('../lib/simple_reader');
 const select = require('../lib/iso7816/select');
-const readBinary = require('../lib/iso7816/readBinary');
+const readBinary = require('../lib/iso7816/read_binary');
 const { printBer } = require('../lib/util');
 const { printResOrError, printResShort } = require('../lib/iso7816/util');
 
