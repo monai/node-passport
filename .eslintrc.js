@@ -5,6 +5,12 @@ module.exports = {
     '@monai/style',
   ],
   rules: {
+    'lines-between-class-members': [
+      'error',
+      {
+        exceptAfterSingleLine: true,
+      },
+    ],
     'no-bitwise': 'off',
     'no-param-reassign': 'off',
     'no-restricted-syntax': [
