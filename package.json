@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@pokusew/pcsclite": "^0.6.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.0",
     "minimist": "^1.2.5",
     "pace": "../node-pace",
     "readable-stream": "^3.6.0",
@@ -28,11 +28,11 @@
     "@monai/eslint-config-node": "0.0.3",
     "@monai/eslint-config-style": "0.0.3",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.24.0",
+    "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "tap": "^15.0.2"
+    "tap": "^15.0.9"
   },
   "tap": {
     "coverage-map": "test/map.js"
