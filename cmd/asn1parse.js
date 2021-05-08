@@ -5,7 +5,7 @@ const { resolve } = require('path');
 const minimist = require('minimist');
 const stream = require('stream-util2');
 const parse = require('../lib/asn1/parse');
-const inspect = require('../lib/asn1/inspect');
+const inspect = require('../lib/asn1/tree_inspect');
 const { noTail } = require('../lib/util');
 
 module.exports = main;
