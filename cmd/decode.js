@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 const { basename, resolve } = require('path');
-const CommandApdu = require('../lib/iso7816/CommandApdu');
-const ResponseApdu = require('../lib/iso7816/ResponseApdu');
-const Session = require('../lib/doc9309/Session');
+const CommandApdu = require('../lib/iso7816/command_apdu');
+const ResponseApdu = require('../lib/iso7816/response_apdu');
+const Session = require('../lib/doc9309/session');
 const { unprotectCommandApdu, unprotectResponseApdu } = require('../lib/doc9309/sm');
 
 module.exports = main;
