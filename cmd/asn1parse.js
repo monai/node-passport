@@ -1,7 +1,4 @@
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable global-require */
 /* eslint-disable no-console */
-const { resolve } = require('path');
 const { pipeline } = require('stream');
 const minimist = require('minimist');
 const stream = require('stream-util2');
@@ -20,7 +17,6 @@ function main(argv) {
     {
       alias: {
         hex: ['h'],
-        type: ['t'],
         force: ['f'],
       },
     },
@@ -33,10 +29,7 @@ function main(argv) {
     new TreeStream(),
     argv.force && new TreeForcedParserStream(),
     argv.tail === false && transformify(noTail),
-    new TreeInspectStream({
-      colors: true,
-      type: type(argv.type),
-    }),
+    new TreeInspectStream({ colors: true }),
     stream.consoleLog(),
   ].filter(Boolean), (err) => {
     if (err) {
@@ -57,13 +50,4 @@ function transformify(fn) {
       done(ex);
     }
   });
-}
-
-function type(arg) {
-  return Object.assign(
-    {},
-    ...(Array.isArray(arg) ? arg : [arg])
-      .filter(Boolean)
-      .map((path) => require(resolve(process.cwd(), path))),
-  );
 }
