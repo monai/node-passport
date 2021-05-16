@@ -2,13 +2,13 @@
 /* eslint-disable no-throw-literal */
 const Reader = require('../lib/reader');
 const select = require('../lib/iso7816/select');
-const performBac = require('../lib/doc9309/performBac');
+const performBac = require('../lib/doc9309/perform_bac');
 const { computeBacKeys } = require('../lib/doc9309/bac');
-const readFile = require('../lib/readFile');
-const SimpleReader = require('../lib/simpleReader');
-const SecureReader = require('../lib/secureReader');
-const parse = require('../lib/asn1/parse');
-const inspect = require('../lib/asn1/inspect');
+const readFile = require('../lib/read_file');
+const SimpleReader = require('../lib/simple_reader');
+const SecureReader = require('../lib/secure_reader');
+const parse = require('../lib/asn1/util/parse');
+const inspect = require('../lib/asn1/tree_inspect');
 
 require('dotenv').config();
 
