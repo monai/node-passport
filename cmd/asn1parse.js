@@ -7,6 +7,7 @@ const stream = require('stream-util2');
 const parse = require('../lib/asn1/util/parse');
 const noTail = require('../lib/asn1/util/no_tail');
 const inspect = require('../lib/asn1/tree_inspect');
+const treeForcedParser = require('../lib/asn1/tree_forced_parser');
 
 module.exports = main;
 
@@ -30,7 +31,10 @@ function main(argv) {
         chunk = Buffer.from(chunk.toString(), 'hex');
       }
 
-      let tree = parse(chunk, { force: argv.force });
+      let tree = parse(chunk);
+      if (argv.force) {
+        tree = treeForcedParser(tree);
+      }
 
       const options = {
         depth: 20,
