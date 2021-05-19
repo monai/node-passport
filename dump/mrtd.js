@@ -17,25 +17,29 @@ if (!kmrz) {
   throw 'Environment variable KMRZ is not defined';
 }
 
-work();
-async function work() {
+main();
+async function main() {
   const reader = new Reader();
+  reader.once('state', (state) => {
+    if (state === 'present') {
+      work(reader).catch(console.error);
+    }
+  });
+}
+
+async function work(reader) {
   const simpleReader = new SimpleReader(reader);
 
-  try {
-    await reader.waitForCard();
-    await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
+  await reader.waitForCard();
+  await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
-    await select(simpleReader, 0x04, 0x0c, { data: 'A0000002471001' });
+  await select(simpleReader, 0x04, 0x0c, { data: 'A0000002471001' });
 
-    const session = await performBac(reader, computeBacKeys(kmrz));
-    const sreader = new SecureReader(reader, session);
+  const session = await performBac(reader, computeBacKeys(kmrz));
+  const sreader = new SecureReader(reader, session);
 
-    const res = await readFile(sreader, { shortFileId: 0x01, le: 0xff });
-    const tree = parse(res);
+  const res = await readFile(sreader, { shortFileId: 0x01, le: 0xff });
+  const tree = parse(res);
 
-    console.log(inspect(tree, { colors: true }));
-  } catch (ex) {
-    console.error(ex);
-  }
+  console.log(inspect(tree, { colors: true }));
 }
