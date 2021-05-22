@@ -9,7 +9,7 @@ const { printResOrError, printResShort } = require('../lib/iso7816/util');
 main();
 async function main() {
   const reader = new Reader();
-  reader.on('state', (state) => {
+  reader.once('state', (state) => {
     if (state === 'present') {
       work(reader).catch(console.error);
     }
