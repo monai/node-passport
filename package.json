@@ -16,10 +16,10 @@
     "node": "14"
   },
   "dependencies": {
+    "@monai/pace": "^1.0.0",
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^9.0.2",
     "minimist": "^1.2.5",
-    "pace": "../node-pace",
     "readable-stream": "^3.6.0",
     "stream-util2": "^1.2.0"
   },
