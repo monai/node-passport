@@ -1,7 +1,11 @@
 /* eslint-disable no-console */
 const Reader = require('../lib/reader');
 const SimpleReader = require('../lib/simple_reader');
-const { selectApplication, dumpFile } = require('./util');
+const SecureReader = require('../lib/secure_reader');
+const performPace = require('../lib/doc9309/perform_pace');
+const { selectApplication, dumpFile, mseRestore, verify } = require('./util');
+
+require('dotenv').config();
 
 main();
 async function main() {
@@ -28,7 +32,9 @@ async function work(reader) {
   await dumpFile(simpleReader, '2f00');
 
   await selectApplication(simpleReader, 'd61659903701524f4f5400', 'ROOT');
-  await dumpFile(simpleReader, '0101', { parse: false });
+  const can = await dumpFile(simpleReader, '0101', { parse: false });
+
+  await selectApplication(simpleReader, 'd61659903701524f4f5400', 'ROOT');
 
   await selectApplication(simpleReader, 'e828bd080fd616599037015349474e31', 'CIA_SIGN1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
@@ -36,9 +42,17 @@ async function work(reader) {
   await dumpFile(simpleReader, '5200', { label: 'EF.AOD' });
 
   await selectApplication(simpleReader, 'd616599037015349474e3100', 'SIGN1');
-  await dumpFile(simpleReader, '0103', { label: 'privateKeys' });
-  await dumpFile(simpleReader, '0104', { label: 'publicKeys' });
-  await dumpFile(simpleReader, '0102', { label: 'certificates' });
+
+  console.log('= Perform PACE');
+  const session = await performPace(simpleReader, { can });
+  const secureReader = new SecureReader(reader, session);
+
+  await mseRestore(secureReader, 0x01);
+  await verify(secureReader, Buffer.from(process.env.PIN));
+
+  await dumpFile(secureReader, '0103', { parse: false, label: 'privateKeys' });
+  await dumpFile(secureReader, '0104', { parse: false, label: 'publicKeys' });
+  await dumpFile(secureReader, '0102', { parse: false, label: 'certificates' });
 
   await selectApplication(simpleReader, 'e828bd080fd616599037014352595054', 'CIA_CRYPTO1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });

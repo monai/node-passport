@@ -2,12 +2,16 @@
 const select = require('../lib/iso7816/select');
 const readFile = require('../lib/read_file');
 const { printBer } = require('../lib/util');
+const CommandApdu = require('../lib/iso7816/command_apdu');
 const Iso7816Error = require('../lib/iso7816/iso7816_error');
 
 module.exports = {
   selectApplication,
   dumpFile,
+  mseRestore,
+  verify,
   printError,
+  printResOrError,
 };
 
 async function selectApplication(reader, aid, label) {
@@ -42,10 +46,34 @@ async function dumpFile(reader, fileId, options = {}) {
   return res;
 }
 
+async function mseRestore(reader, seid) {
+  const apdu = new CommandApdu(0x00, 0x22, 0xf3, seid);
+  console.log('MSE:RESTORE', apdu.toDebugString());
+  const res = await reader.transmit(apdu);
+  printResOrError(res);
+
+  return res;
+}
+
+async function verify(reader, data) {
+  const apdu = new CommandApdu(0x00, 0x20, 0x00, 0x81, { data });
+  console.log('VERIFY', apdu.toDebugString());
+  const res = await reader.transmit(apdu);
+  printResOrError(res);
+}
+
 function printError(error) {
   if (error instanceof Iso7816Error) {
     console.error(`${error.tag} ${error.message}`);
   } else {
     console.error(error);
+  }
+}
+
+function printResOrError(obj) {
+  if (obj.noError()) {
+    console.log(obj);
+  } else {
+    printError(obj.toError());
   }
 }
