@@ -8,7 +8,11 @@ async function main() {
   const reader = new Reader();
   reader.once('state', (state) => {
     if (state === 'present') {
-      work(reader).catch((error) => console.error('main error', error));
+      work(reader)
+        .catch((error) => console.error('main error', error))
+        .finally(() => {
+          reader.close();
+        });
     }
   });
 }
