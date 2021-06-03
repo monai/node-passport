@@ -53,4 +53,7 @@ async function work(reader) {
   await dumpFile(simpleReader, '5400');
   await dumpFile(simpleReader, '5600');
   await dumpFile(simpleReader, '5700');
+  await dumpFile(simpleReader, '5701');
+  await dumpFile(simpleReader, '5702');
+  await dumpFile(simpleReader, '5703');
 }
