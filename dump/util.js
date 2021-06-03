@@ -36,7 +36,7 @@ async function dumpFile(reader, fileId, options = {}) {
   if (options.parse) {
     printBer(res, { noTail: true });
   } else {
-    console.log(res);
+    console.log(res.toString('hex'));
   }
 }
 
