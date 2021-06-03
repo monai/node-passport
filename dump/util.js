@@ -27,7 +27,7 @@ async function dumpFile(reader, fileId, options = {}) {
   res = await select(reader, 0x02, 0x04, { data: fileId, bl: 0x100 });
   if (!res.noError()) {
     printError(res.toError());
-    return;
+    return undefined;
   }
   printBer(res.data);
   console.log('---');
@@ -38,6 +38,8 @@ async function dumpFile(reader, fileId, options = {}) {
   } else {
     console.log(res.toString('hex'));
   }
+
+  return res;
 }
 
 function printError(error) {
