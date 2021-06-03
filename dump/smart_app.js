@@ -70,6 +70,6 @@ async function work(reader) {
   await dumpFile(simpleReader, '5600', { label: 'certificates' });
   await dumpFile(simpleReader, '5700', { label: 'dataContainerObjects' });
   await dumpFile(simpleReader, '5701'); // opaqueDO
-  await dumpFile(simpleReader, '5702'); // unused
-  await dumpFile(simpleReader, '5703'); // unused
+  await dumpFile(simpleReader, '5702'); // unknown
+  await dumpFile(simpleReader, '5703'); // unknown
 }
