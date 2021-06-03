@@ -28,7 +28,7 @@ async function work(reader) {
   await dumpFile(simpleReader, '2f00');
 
   await selectApplication(simpleReader, 'd61659903701524f4f5400', 'ROOT');
-  await dumpFile(simpleReader, '0101', false);
+  await dumpFile(simpleReader, '0101', { parse: false });
 
   await selectApplication(simpleReader, 'e828bd080fd616599037015349474e31', 'CIA_SIGN1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
