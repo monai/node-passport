@@ -6,7 +6,7 @@ const SecureReader = require('../lib/secure_reader');
 const readFile = require('../lib/read_file');
 const CommandApdu = require('../lib/iso7816/command_apdu');
 const performPace = require('../lib/doc9309/perform_pace');
-const { selectApplication } = require('./util');
+const { selectApplication, printError } = require('./util');
 
 require('dotenv').config();
 
@@ -47,17 +47,29 @@ async function work(reader) {
   apdu = new CommandApdu(0x00, 0x22, 0xf3, 0x01);
   console.log('MSE:RESTORE', apdu.toDebugString());
   ret = await secureReader.transmit(apdu);
-  console.log(ret);
+  if (ret.noError()) {
+    console.log(ret);
+  } else {
+    printError(ret.toError());
+  }
 
   // apdu = new CommandApdu(0x00, 0xca, 0x5f, 0x01);
   // console.log('GET DATA', apdu.toDebugString());
   // ret = await secureReader.transmit(apdu);
-  // console.log(ret);
+  // if (ret.noError()) {
+  //   console.log(ret);
+  // } else {
+  //   printError(ret.toError());
+  // }
 
   apdu = new CommandApdu(0x00, 0x20, 0x00, 0x81, { data: Buffer.from(process.env.PIN) });
   console.log('VERIFY', apdu.toDebugString());
   ret = await secureReader.transmit(apdu);
-  console.log(ret);
+  if (ret.noError()) {
+    console.log(ret);
+  } else {
+    printError(ret.toError());
+  }
 
   const data = 'alio';
   const hash = Buffer.alloc(256);
@@ -66,5 +78,9 @@ async function work(reader) {
   apdu = new CommandApdu(0x00, 0x2a, 0x9e, 0x9a, { data: hash });
   console.log('PSO', apdu.toDebugString());
   ret = await secureReader.transmit(apdu, 0xffff);
-  console.log(ret);
+  if (ret.noError()) {
+    console.log(ret);
+  } else {
+    printError(ret.toError());
+  }
 }

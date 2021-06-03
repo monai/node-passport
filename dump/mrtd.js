@@ -8,7 +8,7 @@ const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
 const parse = require('../lib/asn1/util/parse');
 const inspect = require('../lib/asn1/tree_inspect');
-const Iso7816Error = require('../lib/iso7816/iso7816_error');
+const { printError } = require('../lib/util');
 
 require('dotenv').config();
 
@@ -87,12 +87,4 @@ async function work(reader) {
   }
 
   reader.close();
-}
-
-function printError(error) {
-  if (error instanceof Iso7816Error) {
-    console.error(`${error.tag} ${error.message}`);
-  } else {
-    console.error(error);
-  }
 }
