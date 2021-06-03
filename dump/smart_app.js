@@ -33,15 +33,12 @@ async function work(reader) {
   await selectApplication(simpleReader, 'e828bd080fd616599037015349474e31', 'CIA_SIGN1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
   await dumpFile(simpleReader, '5031', { label: 'EF.OD' });
-  await dumpFile(simpleReader, '0103');
-  await dumpFile(simpleReader, '0104');
-  await dumpFile(simpleReader, '0102');
   await dumpFile(simpleReader, '5200', { label: 'EF.AOD' });
 
   await selectApplication(simpleReader, 'd616599037015349474e3100', 'SIGN1');
-  await dumpFile(simpleReader, '0103');
-  await dumpFile(simpleReader, '0104');
-  await dumpFile(simpleReader, '0102');
+  await dumpFile(simpleReader, '0103', { label: 'privateKeys' });
+  await dumpFile(simpleReader, '0104', { label: 'publicKeys' });
+  await dumpFile(simpleReader, '0102', { label: 'certificates' });
 
   await selectApplication(simpleReader, 'e828bd080fd616599037014352595054', 'CIA_CRYPTO1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
@@ -49,11 +46,11 @@ async function work(reader) {
   await dumpFile(simpleReader, '5200', { label: 'EF.AOD' });
 
   await selectApplication(simpleReader, 'd6165990370143525950544f3100', 'CRYPTO1');
-  await dumpFile(simpleReader, '5300');
-  await dumpFile(simpleReader, '5400');
-  await dumpFile(simpleReader, '5600');
-  await dumpFile(simpleReader, '5700');
-  await dumpFile(simpleReader, '5701');
-  await dumpFile(simpleReader, '5702');
-  await dumpFile(simpleReader, '5703');
+  await dumpFile(simpleReader, '5300', { label: 'privateKeys' });
+  await dumpFile(simpleReader, '5400', { label: 'publicKeys' });
+  await dumpFile(simpleReader, '5600', { label: 'certificates' });
+  await dumpFile(simpleReader, '5700', { label: 'dataContainerObjects' });
+  await dumpFile(simpleReader, '5701'); // opaqueDO
+  await dumpFile(simpleReader, '5702'); // unused
+  await dumpFile(simpleReader, '5703'); // unused
 }
