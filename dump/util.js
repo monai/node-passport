@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
+const Reader = require('../lib/reader');
+const CommandApdu = require('../lib/iso7816/command_apdu');
+const Iso7816Error = require('../lib/iso7816/iso7816_error');
 const select = require('../lib/iso7816/select');
 const readFile = require('../lib/read_file');
 const { printBer } = require('../lib/util');
-const CommandApdu = require('../lib/iso7816/command_apdu');
-const Iso7816Error = require('../lib/iso7816/iso7816_error');
 
 module.exports = {
+  main,
   selectApplication,
   dumpFile,
   mseRestore,
@@ -13,6 +15,19 @@ module.exports = {
   printError,
   printResOrError,
 };
+
+async function main(fn) {
+  const reader = new Reader();
+  reader.once('state', (state) => {
+    if (state === 'present') {
+      fn(reader)
+        .catch((error) => console.error('main error', error))
+        .finally(() => {
+          reader.close();
+        });
+    }
+  });
+}
 
 async function selectApplication(reader, aid, label) {
   console.log('= Select Application:', aid, label);

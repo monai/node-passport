@@ -1,13 +1,13 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-console */
 const crypto = require('crypto');
-const Reader = require('../lib/reader');
 const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
 const readFile = require('../lib/read_file');
 const CommandApdu = require('../lib/iso7816/command_apdu');
 const performPace = require('../lib/doc9309/perform_pace');
 const {
+  main,
   selectApplication,
   mseRestore,
   verify,
@@ -16,20 +16,7 @@ const {
 
 require('dotenv').config();
 
-main();
-async function main() {
-  const reader = new Reader();
-  reader.once('state', (state) => {
-    if (state === 'present') {
-      work(reader)
-        .catch((error) => console.error('main error', error))
-        .finally(() => {
-          reader.close();
-        });
-    }
-  });
-}
-
+main(work);
 async function work(reader) {
   console.log(`= ATR: ${reader.atr.toString('hex')}`);
 
