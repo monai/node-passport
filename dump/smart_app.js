@@ -3,7 +3,12 @@ const Reader = require('../lib/reader');
 const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
 const performPace = require('../lib/doc9309/perform_pace');
-const { selectApplication, dumpFile, mseRestore, verify } = require('./util');
+const {
+  selectApplication,
+  dumpFile,
+  mseRestore,
+  verify,
+} = require('./util');
 
 require('dotenv').config();
 
