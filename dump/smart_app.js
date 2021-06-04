@@ -56,7 +56,7 @@ async function work(reader) {
   await dumpFile(simpleReader, '5400', { label: 'EF.PuKD' });
   await dumpFile(simpleReader, '5600', { label: 'EF.CD' });
   await dumpFile(simpleReader, '5700', { label: 'EF.DCOD' });
-  await dumpFile(simpleReader, '5701'); // opaqueDO
-  await dumpFile(simpleReader, '5702'); // unknown
-  await dumpFile(simpleReader, '5703'); // unknown
+  await dumpFile(simpleReader, '5701'); // opaqueDOs
+  await dumpFile(simpleReader, '5702'); // unknown; possibly 5701 extension
+  await dumpFile(simpleReader, '5703'); // cache
 }
