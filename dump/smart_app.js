@@ -42,9 +42,9 @@ async function work(reader) {
   await mseRestore(secureReader, 0x01);
   await verify(secureReader, Buffer.from(process.env.PIN));
 
-  await dumpFile(secureReader, '0103', { parse: false, label: 'privateKeys' });
-  await dumpFile(secureReader, '0104', { parse: false, label: 'publicKeys' });
-  await dumpFile(secureReader, '0102', { parse: false, label: 'certificates' });
+  await dumpFile(secureReader, '0103', { parse: false, label: 'EF.PrKD' });
+  await dumpFile(secureReader, '0104', { parse: false, label: 'EF.PuKD' });
+  await dumpFile(secureReader, '0102', { parse: false, label: 'EF.CD' });
 
   await selectApplication(simpleReader, 'e828bd080fd616599037014352595054', 'CIA_CRYPTO1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
@@ -52,10 +52,10 @@ async function work(reader) {
   await dumpFile(simpleReader, '5200', { label: 'EF.AOD' });
 
   await selectApplication(simpleReader, 'd6165990370143525950544f3100', 'CRYPTO1');
-  await dumpFile(simpleReader, '5300', { label: 'privateKeys' });
-  await dumpFile(simpleReader, '5400', { label: 'publicKeys' });
-  await dumpFile(simpleReader, '5600', { label: 'certificates' });
-  await dumpFile(simpleReader, '5700', { label: 'dataContainerObjects' });
+  await dumpFile(simpleReader, '5300', { label: 'EF.PrKD' });
+  await dumpFile(simpleReader, '5400', { label: 'EF.PuKD' });
+  await dumpFile(simpleReader, '5600', { label: 'EF.CD' });
+  await dumpFile(simpleReader, '5700', { label: 'EF.DCOD' });
   await dumpFile(simpleReader, '5701'); // opaqueDO
   await dumpFile(simpleReader, '5702'); // unknown
   await dumpFile(simpleReader, '5703'); // unknown
