@@ -26,8 +26,6 @@ async function work(reader) {
   await selectApplication(simpleReader, 'd61659903701524f4f5400', 'ROOT');
   const can = await dumpFile(simpleReader, '0101', { parse: false });
 
-  await selectApplication(simpleReader, 'd61659903701524f4f5400', 'ROOT');
-
   await selectApplication(simpleReader, 'e828bd080fd616599037015349474e31', 'CIA_SIGN1');
   await dumpFile(simpleReader, '5032', { label: 'EF.CIAInfo' });
   await dumpFile(simpleReader, '5031', { label: 'EF.OD' });
