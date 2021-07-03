@@ -5,7 +5,7 @@ const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
 const readFile = require('../lib/read_file');
 const CommandApdu = require('../lib/iso7816/command_apdu');
-const performPace = require('../lib/doc9309/perform_pace');
+const { oids, performPace } = require('../lib/doc9309/perform_pace');
 const {
   main,
   selectApplication,
@@ -31,7 +31,11 @@ async function work(reader) {
   await selectApplication(simpleReader, 'd6165990370143525950544f3100', 'CRYPTO1');
 
   console.log('= Perform PACE');
-  const session = await performPace(simpleReader, { can });
+  const session = await performPace(simpleReader, {
+    can,
+    oid: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
+    curve: 'prime256v1',
+  });
   const secureReader = new SecureReader(reader, session);
 
   await mseRestore(secureReader, 0x01);

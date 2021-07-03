@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
-const performPace = require('../lib/doc9309/perform_pace');
+const { oids, performPace } = require('../lib/doc9309/perform_pace');
 const {
   main,
   selectApplication,
@@ -34,7 +34,11 @@ async function work(reader) {
   await selectApplication(simpleReader, 'd616599037015349474e3100', 'SIGN1');
 
   console.log('= Perform PACE');
-  const session = await performPace(simpleReader, { can });
+  const session = await performPace(simpleReader, {
+    can,
+    oid: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
+    curve: 'prime256v1',
+  });
   const secureReader = new SecureReader(reader, session);
 
   await mseRestore(secureReader, 0x01);

@@ -6,7 +6,7 @@ const SecureReader = require('../lib/secure_reader');
 const select = require('../lib/iso7816/select');
 const readFile = require('../lib/read_file');
 const CommandApdu = require('../lib/iso7816/command_apdu');
-const performPace = require('../lib/doc9309/perform_pace');
+const { oids, performPace } = require('../lib/doc9309/perform_pace');
 const { printError } = require('../lib/util');
 
 require('dotenv').config();
@@ -51,7 +51,11 @@ async function work(reader) {
 
     if (typeof func === 'function') {
       console.log('= Perform PACE');
-      const session = await performPace(simpleReader, { can });
+      const session = await performPace(simpleReader, {
+        can,
+        oid: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
+        curve: 'prime256v1',
+      });
       const secureReader = new SecureReader(reader, session);
       await mse(secureReader);
       rdr = secureReader;
