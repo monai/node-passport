@@ -53,8 +53,8 @@ async function work(reader) {
       console.log('= Perform PACE');
       const session = await performPace(simpleReader, {
         can,
-        oid: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
-        curve: 'prime256v1',
+        protocol: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
+        parameterId: 12,
       });
       const secureReader = new SecureReader(reader, session);
       await mse(secureReader);
