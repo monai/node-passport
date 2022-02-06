@@ -4,10 +4,10 @@ const minimist = require('minimist');
 const stream = require('stream-util2');
 const noTail = require('../lib/asn1/util/no_tail');
 
-const ParserStream = require('../lib/asn1/parser_stream');
-const TreeStream = require('../lib/asn1/tree_stream');
-const TreeInspectStream = require('../lib/asn1/tree_inspect_stream');
-const TreeForcedParserStream = require('../lib/asn1/tree_forced_parser_stream');
+const ParserStream = require('../lib/asn1/ber/parser_stream');
+const TreeStream = require('../lib/asn1/tree/stream');
+const TreeInspectStream = require('../lib/asn1/tree/inspect_stream');
+const TreeForcedParserStream = require('../lib/asn1/tree/forced_parser_stream');
 
 module.exports = main;
 
