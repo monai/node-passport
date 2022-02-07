@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-const Reader = require('../lib/reader');
 const select = require('../lib/iso7816/select');
 const getResponse = require('../lib/iso7816/get_response');
 const { ControlParameters } = require('../lib/iso7816/control_parameters');
@@ -11,21 +10,9 @@ const { printBer } = require('../lib/util');
 const readBinary = require('../lib/iso7816/read_binary');
 const readRecord = require('../lib/iso7816/read_record');
 const telecomTemplates = require('../lib/telecom/templates/templates');
+const { main } = require('./util');
 
-main();
-async function main() {
-  const reader = new Reader();
-  reader.once('state', (state) => {
-    if (state === 'present') {
-      work(reader)
-        .catch((error) => {
-          console.error('main error', error);
-        })
-        .finally(() => reader.close());
-    }
-  });
-}
-
+main(work);
 async function work(reader) {
   console.log(`= ATR: ${reader.atr.toString('hex')}`);
 

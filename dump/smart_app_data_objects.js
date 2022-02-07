@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
-const Reader = require('../lib/reader');
 const SimpleReader = require('../lib/simple_reader');
 const SecureReader = require('../lib/secure_reader');
 const select = require('../lib/iso7816/select');
@@ -8,23 +7,11 @@ const readFile = require('../lib/read_file');
 const CommandApdu = require('../lib/iso7816/command_apdu');
 const { oids, performPace } = require('../lib/doc9309/perform_pace');
 const { printError } = require('../lib/util');
+const { main } = require('./util');
 
 require('dotenv').config();
 
-main();
-async function main() {
-  const reader = new Reader();
-  reader.once('state', (state) => {
-    if (state === 'present') {
-      work(reader)
-        .catch((error) => console.error('main error', error))
-        .finally(() => {
-          reader.close();
-        });
-    }
-  });
-}
-
+main(work);
 async function work(reader) {
   console.log(`= ATR: ${reader.atr.toString('hex')}`);
 
