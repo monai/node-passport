@@ -31,7 +31,7 @@ async function work(reader) {
 
     cp = new ControlParameters(res.data);
     if (cp.fileLength) {
-      res = await readBinary(simpleReader, '3f00', cp.fileLength);
+      res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
     }
   } else {
