@@ -5,5 +5,7 @@ coverage
 docs
 node_modules
 mobileid
+private
 
 .env
+test-*
