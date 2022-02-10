@@ -36,6 +36,6 @@
     "tap": "^15.0.10"
   },
   "tap": {
-    "coverage-map": "test/map.js"
+    "coverage-map": "test/map.cjs"
   }
 }
