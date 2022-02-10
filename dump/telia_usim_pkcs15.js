@@ -1,16 +1,15 @@
 /* eslint-disable no-console */
-const select = require('../lib/iso7816/select');
-const getResponse = require('../lib/iso7816/get_response');
-const { ControlParameters } = require('../lib/iso7816/control_parameters');
-const SimpleReader = require('../lib/simple_reader');
-const parse = require('../lib/asn1/util/parse');
-const inspect = require('../lib/asn1/tree/inspect');
-const { printError } = require('./util');
-const { printBer } = require('../lib/util');
-const readBinary = require('../lib/iso7816/read_binary');
-const readRecord = require('../lib/iso7816/read_record');
-const telecomTemplates = require('../lib/telecom/templates/templates');
-const { main } = require('./util');
+import select from '../lib/iso7816/select.js';
+import getResponse from '../lib/iso7816/get_response.js';
+import ControlParameters from '../lib/iso7816/control_parameters.js';
+import SimpleReader from '../lib/simple_reader.js';
+import parse from '../lib/asn1/util/parse.js';
+import inspect from '../lib/asn1/tree/inspect.js';
+import { main, printError } from './util.js';
+import { printBer } from '../lib/util.js';
+import readBinary from '../lib/iso7816/read_binary.js';
+import readRecord from '../lib/iso7816/read_record.js';
+import telecomTemplates from '../lib/telecom/templates/templates.js';
 
 main(work);
 async function work(reader) {

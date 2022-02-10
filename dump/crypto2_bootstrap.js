@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-const Reader = require('../lib/reader');
-const SimpleReader = require('../lib/simple_reader');
-const select = require('../lib/iso7816/select');
-const readBinary = require('../lib/iso7816/read_binary');
-const { printBer } = require('../lib/util');
-const { printResOrError, printResShort } = require('../lib/iso7816/util');
+import Reader from '../lib/reader.js';
+import SimpleReader from '../lib/simple_reader.js';
+import select from '../lib/iso7816/select.js';
+import readBinary from '../lib/iso7816/read_binary.js';
+import { printBer } from '../lib/util.js';
+import { printResOrError, printResShort } from '../lib/iso7816/util.js';
 
 main();
 async function main() {

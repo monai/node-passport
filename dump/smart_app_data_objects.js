@@ -1,15 +1,15 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
-const SimpleReader = require('../lib/simple_reader');
-const SecureReader = require('../lib/secure_reader');
-const select = require('../lib/iso7816/select');
-const readFile = require('../lib/read_file');
-const CommandApdu = require('../lib/iso7816/command_apdu');
-const { oids, performPace } = require('../lib/doc9309/perform_pace');
-const { printError } = require('../lib/util');
-const { main } = require('./util');
+import dotenv from 'dotenv';
+import SimpleReader from '../lib/simple_reader.js';
+import SecureReader from '../lib/secure_reader.js';
+import select from '../lib/iso7816/select.js';
+import readFile from '../lib/read_file.js';
+import CommandApdu from '../lib/iso7816/command_apdu.js';
+import { oids, performPace } from '../lib/doc9309/perform_pace.js';
+import { main, printError } from './util.js';
 
-require('dotenv').config();
+dotenv.config();
 
 main(work);
 async function work(reader) {

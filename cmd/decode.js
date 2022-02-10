@@ -1,14 +1,12 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
-const { basename, resolve } = require('path');
-const CommandApdu = require('../lib/iso7816/command_apdu');
-const ResponseApdu = require('../lib/iso7816/response_apdu');
-const Session = require('../lib/doc9309/session');
-const { unprotectCommandApdu, unprotectResponseApdu } = require('../lib/doc9309/sm');
+import { basename, resolve } from 'path';
+import CommandApdu from '../lib/iso7816/command_apdu.js';
+import ResponseApdu from '../lib/iso7816/response_apdu.js';
+import Session from '../lib/doc9309/session.js';
+import { unprotectCommandApdu, unprotectResponseApdu } from '../lib/doc9309/sm.js';
 
-module.exports = main;
-
-function main(program, filename) {
+export default function main(program, filename) {
   if (!filename) {
     console.log(`Usage: ${program} FILE\n\nFile pattern: kEnc-kMac-name.json`);
     process.exit(0);
@@ -24,7 +22,7 @@ function main(program, filename) {
     Buffer.alloc(8),
   );
 
-  // eslint-disable-next-line global-require, import/no-dynamic-require
+  // eslint-disable-next-line global-require, import/no-dynamic-require, no-undef
   require(filename)
     .map(prepare)
     .reduce(concat, [])

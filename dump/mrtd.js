@@ -1,32 +1,23 @@
 /* eslint-disable no-console */
-const Reader = require('../lib/reader');
-const select = require('../lib/iso7816/select');
-const performBac = require('../lib/doc9309/perform_bac');
-const { computeBacKeys } = require('../lib/doc9309/bac');
-const readFile = require('../lib/read_file');
-const SimpleReader = require('../lib/simple_reader');
-const SecureReader = require('../lib/secure_reader');
-const parse = require('../lib/asn1/util/parse');
-const inspect = require('../lib/asn1/tree_inspect');
-const { printError } = require('../lib/util');
+import dotenv from 'dotenv';
+import select from '../lib/iso7816/select.js';
+import performBac from '../lib/doc9309/perform_bac.js';
+import { computeBacKeys } from '../lib/doc9309/bac.js';
+import readFile from '../lib/read_file.js';
+import SimpleReader from '../lib/simple_reader.js';
+import SecureReader from '../lib/secure_reader.js';
+import parse from '../lib/asn1/util/parse.js';
+import inspect from '../lib/asn1/tree/inspect.js';
+import { main, printError } from './util.js';
 
-require('dotenv').config();
+dotenv.config();
 
 const kmrz = process.env.KMRZ;
 if (!kmrz) {
   throw new Error('Environment variable KMRZ is not defined');
 }
 
-main();
-async function main() {
-  const reader = new Reader();
-  reader.once('state', (state) => {
-    if (state === 'present') {
-      work(reader).catch((error) => console.error('main error', error));
-    }
-  });
-}
-
+main(work);
 async function work(reader) {
   console.log(`= ATR: ${reader.atr.toString('hex')}`);
 

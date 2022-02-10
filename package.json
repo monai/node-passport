@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "EU passport playground",
   "main": "index.js",
+  "type": "module",
   "bin": {
     "decode-packet-dump": "./bin/decode.js",
     "asn1parse": "./bin/asn1parse.js"

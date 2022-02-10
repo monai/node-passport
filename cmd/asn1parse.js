@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-const { pipeline } = require('stream');
-const minimist = require('minimist');
-const stream = require('stream-util2');
-const noTail = require('../lib/asn1/util/no_tail');
+import { pipeline } from 'stream';
+import minimist from 'minimist';
+import { consoleLog, transform } from 'stream-util2';
+import noTail from '../lib/asn1/util/no_tail.js';
 
-const ParserStream = require('../lib/asn1/ber/parser_stream');
-const TreeStream = require('../lib/asn1/tree/stream');
-const TreeInspectStream = require('../lib/asn1/tree/inspect_stream');
-const TreeForcedParserStream = require('../lib/asn1/tree/forced_parser_stream');
+import ParserStream from '../lib/asn1/ber/parser_stream.js';
+import TreeStream from '../lib/asn1/tree/stream.js';
+import TreeInspectStream from '../lib/asn1/tree/inspect_stream.js';
+import TreeForcedParserStream from '../lib/asn1/tree/forced_parser_stream.js';
 
-module.exports = main;
+export default main;
 
 function main(argv) {
   argv = minimist(
@@ -30,7 +30,7 @@ function main(argv) {
     argv.force && new TreeForcedParserStream(),
     argv.tail === false && transformify(noTail),
     new TreeInspectStream({ colors: true }),
-    stream.consoleLog(),
+    consoleLog(),
   ].filter(Boolean), (err) => {
     if (err) {
       console.error(err);
@@ -43,7 +43,7 @@ function toHex(buf) {
 }
 
 function transformify(fn) {
-  return stream.transform((chunk, done) => {
+  return transform((chunk, done) => {
     try {
       done(null, fn(chunk));
     } catch (ex) {

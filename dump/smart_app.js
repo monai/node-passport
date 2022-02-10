@@ -1,16 +1,13 @@
 /* eslint-disable no-console */
-const SimpleReader = require('../lib/simple_reader');
-const SecureReader = require('../lib/secure_reader');
-const { oids, performPace } = require('../lib/doc9309/perform_pace');
-const {
-  main,
-  selectApplication,
-  dumpFile,
-  mseRestore,
-  verify,
-} = require('./util');
+import dotenv from 'dotenv';
+import SimpleReader from '../lib/simple_reader.js';
+import SecureReader from '../lib/secure_reader.js';
+import { oids, performPace } from '../lib/doc9309/perform_pace.js';
+import {
+  main, selectApplication, dumpFile, mseRestore, verify,
+} from './util.js';
 
-require('dotenv').config();
+dotenv.config();
 
 main(work);
 async function work(reader) {

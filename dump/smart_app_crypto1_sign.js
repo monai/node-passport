@@ -1,20 +1,17 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-console */
-const crypto = require('crypto');
-const SimpleReader = require('../lib/simple_reader');
-const SecureReader = require('../lib/secure_reader');
-const readFile = require('../lib/read_file');
-const CommandApdu = require('../lib/iso7816/command_apdu');
-const { oids, performPace } = require('../lib/doc9309/perform_pace');
-const {
-  main,
-  selectApplication,
-  mseRestore,
-  verify,
-  printResOrError,
-} = require('./util');
+import dotenv from 'dotenv';
+import { createHash } from 'crypto';
+import SimpleReader from '../lib/simple_reader.js';
+import SecureReader from '../lib/secure_reader.js';
+import readFile from '../lib/read_file.js';
+import CommandApdu from '../lib/iso7816/command_apdu.js';
+import { oids, performPace } from '../lib/doc9309/perform_pace.js';
+import {
+  main, selectApplication, mseRestore, verify, printResOrError,
+} from './util.js';
 
-require('dotenv').config();
+dotenv.config();
 
 main(work);
 async function work(reader) {
@@ -51,7 +48,7 @@ async function work(reader) {
 
   const data = 'alio';
   const hash = Buffer.alloc(256);
-  crypto.createHash('sha256').update(data).digest().copy(hash, 256 - 32);
+  createHash('sha256').update(data).digest().copy(hash, 256 - 32);
 
   apdu = new CommandApdu(0x00, 0x2a, 0x9e, 0x9a, { data: hash });
   console.log('PSO', apdu.toDebugString());
