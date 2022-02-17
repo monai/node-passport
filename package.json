@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "decode-packet-dump": "./bin/decode.mjs",
-    "asn1parse": "./bin/asn1parse.mjs"
+    "packetdump": "./bin/packetdump.mjs",
+    "berdump": "./bin/berdump.mjs"
   },
   "scripts": {
     "test": "tap -R specy lib/**/__test__"

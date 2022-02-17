@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { pipeline } from 'stream';
+import { pipeline, Transform } from 'stream';
 import minimist from 'minimist';
-import { consoleLog, transform } from 'stream-util2';
+import { consoleLog } from 'stream-util2';
 import noTail from '../lib/asn1/util/no_tail.mjs';
 
 import ParserStream from '../lib/asn1/ber/parser_stream.mjs';
@@ -24,11 +24,11 @@ function main(argv) {
 
   pipeline([
     process.stdin,
-    argv.hex && transformify(toHex),
+    argv.hex && transform(fromHex),
     new ParserStream(),
     new TreeStream(),
     argv.force && new TreeForcedParserStream(),
-    argv.tail === false && transformify(noTail),
+    argv.tail === false && transform(noTail, true),
     new TreeInspectStream({ colors: true }),
     consoleLog(),
   ].filter(Boolean), (err) => {
@@ -38,16 +38,15 @@ function main(argv) {
   });
 }
 
-function toHex(buf) {
+function fromHex(buf) {
   return Buffer.from(buf.toString(), 'hex');
 }
 
-function transformify(fn) {
-  return transform((chunk, done) => {
-    try {
+function transform(fn, objectMode) {
+  return new Transform({
+    objectMode,
+    transform(chunk, _, done) {
       done(null, fn(chunk));
-    } catch (ex) {
-      done(ex);
-    }
+    },
   });
 }
