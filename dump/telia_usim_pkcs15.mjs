@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import select from '../lib/iso7816/select.mjs';
 import getResponse from '../lib/iso7816/get_response.mjs';
-import ControlParameters from '../lib/iso7816/control_parameters.mjs';
 import SimpleReader from '../lib/simple_reader.mjs';
 import parse from '../lib/asn1/util/parse.mjs';
 import inspect from '../lib/asn1/tree/inspect.mjs';
@@ -10,6 +9,7 @@ import { printBer } from '../lib/util.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 import readRecord from '../lib/iso7816/read_record.mjs';
 import telecomTemplates from '../lib/telecom/templates/templates.mjs';
+import controlParameters from '../lib/telecom/util/control_parameters.mjs';
 
 main(work);
 async function work(reader) {
@@ -28,7 +28,7 @@ async function work(reader) {
     console.log(res);
     console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
@@ -43,7 +43,7 @@ async function work(reader) {
     console.log(res);
     console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     const { maximumRecordSize, numberOfRecords } = cp.fileDescriptor;
 
     for (let i = 0; i < numberOfRecords; i += 1) {
@@ -65,7 +65,7 @@ async function work(reader) {
     console.log(res);
     console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
   } else {
     printError(res.toError());
   }
@@ -78,7 +78,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       if (res.noError()) {
@@ -99,7 +99,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       if (res.noError()) {
@@ -120,7 +120,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
@@ -142,7 +142,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
@@ -164,7 +164,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
@@ -186,7 +186,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
@@ -208,7 +208,7 @@ async function work(reader) {
       console.log(inspect(tree.node, { template: telecomTemplates, colors: true }));
     }
 
-    cp = new ControlParameters(res.data);
+    cp = controlParameters(res.data);
     if (cp.fileLength) {
       res = await readBinary(simpleReader, 0, cp.fileLength);
       console.log(res);
