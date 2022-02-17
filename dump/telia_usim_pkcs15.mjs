@@ -5,7 +5,7 @@ import SimpleReader from '../lib/simple_reader.mjs';
 import parse from '../lib/asn1/util/parse.mjs';
 import inspect from '../lib/asn1/tree/inspect.mjs';
 import { main, printError } from './util.mjs';
-import { printBer } from '../lib/util.mjs';
+import printBer from '../lib/asn1/util/print_ber.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 import readRecord from '../lib/iso7816/read_record.mjs';
 import telecomTemplates from '../lib/telecom/templates/templates.mjs';

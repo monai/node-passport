@@ -3,7 +3,7 @@ import Reader from '../lib/reader.mjs';
 import SimpleReader from '../lib/simple_reader.mjs';
 import select from '../lib/iso7816/select.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
-import { printBer } from '../lib/util.mjs';
+import printBer from '../lib/asn1/util/print_ber.mjs';
 import { printResOrError, printResShort } from '../lib/iso7816/util.mjs';
 
 main();

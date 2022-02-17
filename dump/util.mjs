@@ -4,7 +4,7 @@ import CommandApdu from '../lib/iso7816/command_apdu.mjs';
 import Iso7816Error from '../lib/iso7816/iso7816_error.mjs';
 import select from '../lib/iso7816/select.mjs';
 import readFile from '../lib/read_file.mjs';
-import { printBer } from '../lib/util.mjs';
+import printBer from '../lib/asn1/util/print_ber.mjs';
 
 export async function main(fn) {
   const reader = new Reader();
