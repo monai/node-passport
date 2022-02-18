@@ -17,6 +17,7 @@ function main(argv) {
     {
       alias: {
         hex: ['h'],
+        ber: ['b'],
       },
     },
   );
@@ -24,8 +25,9 @@ function main(argv) {
   pipeline([
     process.stdin,
     argv.hex && transform(fromHex),
-    new ParserStream(),
-    new TreeStream(),
+    argv.ber && new ParserStream(),
+    argv.ber && new TreeStream(),
+    argv.ber && transform(unwrap, true),
     transform(parse, true),
     consoleLog(),
   ].filter(Boolean), (err) => {
@@ -35,9 +37,15 @@ function main(argv) {
   });
 }
 
-function parse(tree) {
-  const data = tree.children[0].contents;
+function fromHex(buf) {
+  return Buffer.from(buf.toString(), 'hex');
+}
 
+function unwrap(tree) {
+  return tree.children[0].contents;
+}
+
+function parse(data) {
   const out = [];
   for (const [tag, value] of parser(data)) {
     const dataObject = dos[tag.value];
@@ -59,10 +67,6 @@ function parse(tree) {
   }
 
   return out.join('\n');
-}
-
-function fromHex(buf) {
-  return Buffer.from(buf.toString(), 'hex');
 }
 
 function transform(fn, objectMode) {

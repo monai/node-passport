@@ -6,7 +6,7 @@
   "type": "module",
   "bin": {
     "berdump": "./bin/berdump.mjs",
-    "fetchdump": "./bin/fetchdump.mjs",
+    "proactivedump": "./bin/proactivedump.mjs",
     "packetdump": "./bin/packetdump.mjs"
   },
   "scripts": {
