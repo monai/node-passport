@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "packetdump": "./bin/packetdump.mjs",
-    "berdump": "./bin/berdump.mjs"
+    "berdump": "./bin/berdump.mjs",
+    "fetchdump": "./bin/fetchdump.mjs",
+    "packetdump": "./bin/packetdump.mjs"
   },
   "scripts": {
     "test": "tap -R specy lib/**/__test__"
