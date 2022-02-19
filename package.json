@@ -22,7 +22,6 @@
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^10.0.0",
     "minimist": "^1.2.5",
-    "readable-stream": "^3.6.0",
     "stream-util2": "^1.2.0"
   },
   "devDependencies": {
