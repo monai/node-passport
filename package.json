@@ -20,7 +20,7 @@
   "dependencies": {
     "@monai/pace": "^2.0.0",
     "@pokusew/pcsclite": "^0.6.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.0",
     "minimist": "^1.2.5",
     "stream-util2": "^1.2.0"
   },
@@ -29,7 +29,7 @@
     "@monai/eslint-config-base": "0.0.5",
     "@monai/eslint-config-node": "0.0.5",
     "@monai/eslint-config-style": "0.0.5",
-    "eslint": "^8.8.0",
+    "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
