@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { inspect } from 'util';
 import dotenv from 'dotenv';
 import select from '../lib/iso7816/select.mjs';
 import performBac from '../lib/doc9309/perform_bac.mjs';
@@ -7,7 +8,6 @@ import readFile from '../lib/read_file.mjs';
 import SimpleReader from '../lib/simple_reader.mjs';
 import SecureReader from '../lib/secure_reader.mjs';
 import parse from '../lib/asn1/util/parse.mjs';
-import inspect from '../lib/asn1/tree/inspect.mjs';
 import { main, printError } from './util.mjs';
 
 dotenv.config();

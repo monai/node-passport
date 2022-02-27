@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
+import { inspect } from 'util';
 import select from '../lib/iso7816/select.mjs';
 import getResponse from '../lib/iso7816/get_response.mjs';
 import SimpleReader from '../lib/simple_reader.mjs';
 import parse from '../lib/asn1/util/parse.mjs';
-import inspect from '../lib/asn1/tree/inspect.mjs';
 import { main, printError } from './util.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
