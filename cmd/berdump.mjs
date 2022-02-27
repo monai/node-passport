@@ -2,7 +2,6 @@
 import { pipeline, Transform } from 'stream';
 import minimist from 'minimist';
 import { consoleLog } from 'stream-util2';
-import noTail from '../lib/asn1/util/no_tail.mjs';
 
 import ParserStream from '../lib/asn1/ber/parser_stream.mjs';
 import TreeStream from '../lib/asn1/tree/stream.mjs';
@@ -28,7 +27,7 @@ function main(argv) {
     new ParserStream(),
     new TreeStream(),
     argv.force && new TreeForcedParserStream(),
-    argv.tail === false && transform(noTail, true),
+    argv.tail === false && transform((node) => node.noTail(), true),
     new TreeInspectStream({ colors: true }),
     consoleLog(),
   ].filter(Boolean), (err) => {
