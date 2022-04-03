@@ -5,6 +5,7 @@ import Iso7816Error from '../lib/iso7816/iso7816_error.mjs';
 import select from '../lib/iso7816/select.mjs';
 import readFile from '../lib/read_file.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
+import fci from '../lib/iso7816/templates/file_control_information/fci.mjs';
 
 export async function main(fn) {
   const reader = new Reader();
@@ -38,7 +39,7 @@ export async function dumpFile(reader, fileId, options = {}) {
     printError(res.toError());
     return undefined;
   }
-  printBer(res.data);
+  printBer(res.data, { template: fci });
   console.log('---');
 
   res = await readFile(reader, { fileId, le: 0xff });
