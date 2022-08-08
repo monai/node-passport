@@ -6,7 +6,7 @@ import SecureReader from '../lib/secure_reader.mjs';
 import select from '../lib/iso7816/select.mjs';
 import readFile from '../lib/read_file.mjs';
 import CommandApdu from '../lib/iso7816/command_apdu.mjs';
-import { oids, performPace } from '../lib/doc9309/perform_pace.mjs';
+import performPace from '../lib/doc9309/perform_pace.mjs';
 import { main, printError } from './util.mjs';
 
 dotenv.config();
@@ -39,9 +39,11 @@ async function work(reader) {
     if (typeof func === 'function') {
       console.log('= Perform PACE');
       const session = await performPace(simpleReader, {
-        can,
-        protocol: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
-        parameterId: 12,
+        password: can,
+        passwordType: 'id-RAW',
+        reference: 'id-CAN',
+        protocol: 'id-PACE-ECDH-GM-3DES-CBC-CBC',
+        standardizedDomainParameter: 12,
       });
       const secureReader = new SecureReader(reader, session);
       await mse(secureReader);

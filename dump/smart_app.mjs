@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 import SimpleReader from '../lib/simple_reader.mjs';
 import SecureReader from '../lib/secure_reader.mjs';
-import { oids, performPace } from '../lib/doc9309/perform_pace.mjs';
+import performPace from '../lib/doc9309/perform_pace.mjs';
 import {
   main, selectApplication, dumpFile, mseRestore, verify,
 } from './util.mjs';
@@ -32,14 +32,16 @@ async function work(reader) {
 
   console.log('= Perform PACE');
   const session = await performPace(simpleReader, {
-    can,
-    protocol: oids['id-PACE-ECDH-GM-3DES-CBC-CBC'],
-    parameterId: 12,
+    password: can,
+    passwordType: 'id-RAW',
+    reference: 'id-CAN',
+    protocol: 'id-PACE-ECDH-GM-3DES-CBC-CBC',
+    standardizedDomainParameter: 12,
   });
   const secureReader = new SecureReader(reader, session);
 
   await mseRestore(secureReader, 0x01);
-  await verify(secureReader, Buffer.from(process.env.PIN));
+  await verify(secureReader, Buffer.from(process.env.LITEID_2012_PIN));
 
   await dumpFile(secureReader, '0103', { parse: false, label: 'EF.PrKD' });
   await dumpFile(secureReader, '0104', { parse: false, label: 'EF.PuKD' });
