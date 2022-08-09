@@ -33,7 +33,7 @@ async function work(reader) {
     passwordType: 'id-RAW',
     reference: 'id-CAN',
     protocol: 'id-PACE-ECDH-GM-3DES-CBC-CBC',
-    standardizedDomainParameter: 12,
+    standardizedDomainParametersId: 12,
   });
   const secureReader = new SecureReader(reader, session);
 
