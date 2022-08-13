@@ -22,6 +22,7 @@
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^16.0.0",
     "minimist": "^1.2.6",
+    "node-aes-cmac": "^0.1.1",
     "stream-util2": "^1.2.0"
   },
   "devDependencies": {
