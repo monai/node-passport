@@ -18,7 +18,7 @@
     "node": "14"
   },
   "dependencies": {
-    "@monai/pace": "^2.0.0",
+    "@monai/pace": "^3.0.0",
     "@pokusew/pcsclite": "^0.6.0",
     "dotenv": "^16.0.0",
     "minimist": "^1.2.6",
