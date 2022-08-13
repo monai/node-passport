@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
+import { createRequire } from 'module';
 import { basename, resolve } from 'path';
 import CommandApdu from '../lib/iso7816/command_apdu.mjs';
 import ResponseApdu from '../lib/iso7816/response_apdu.mjs';
@@ -8,20 +9,20 @@ import { unprotectCommandApdu, unprotectResponseApdu } from '../lib/doc9309/sm.m
 
 export default function main(program, filename) {
   if (!filename) {
-    console.log(`Usage: ${program} FILE\n\nFile pattern: kEnc-kMac-name.json`);
+    console.log(`Usage: ${program} FILE\n\nFile pattern: algorithm-kEnc-kMac-name.json`);
     process.exit(0);
   }
 
   filename = resolve(process.cwd(), process.argv[2]);
-  const [kEnc, kMac] = basename(filename).split('-');
+  const [algorithm, kEnc, kMac] = basename(filename).split('-');
 
   const session = new Session(
-    'des-ede3-cbc',
+    algorithm.replace(/_/g, '-'),
     Buffer.from(kEnc, 'hex'),
     Buffer.from(kMac, 'hex'),
-    Buffer.alloc(8),
   );
 
+  const require = createRequire(import.meta.url);
   // eslint-disable-next-line global-require, import/no-dynamic-require, no-undef
   require(filename)
     .map(prepare)
@@ -42,7 +43,7 @@ function prepare(doc) {
     data: Buffer.from(
       doc._source.layers['usb.capdata'].replace(/:/g, ''),
       'hex',
-    ).slice(10),
+    ).subarray(10),
   };
 }
 
