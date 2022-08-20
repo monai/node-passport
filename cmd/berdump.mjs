@@ -27,7 +27,7 @@ function main(argv) {
     new ParserStream(),
     new TreeStream(),
     argv.force && new TreeForcedParserStream(),
-    argv.tail === false && transform((node) => node.noTail(), true),
+    argv.tail === false && transform((node) => node.trimEnd(), true),
     new TreeInspectStream({ colors: true }),
     consoleLog(),
   ].filter(Boolean), (err) => {
