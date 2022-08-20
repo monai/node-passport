@@ -7,6 +7,15 @@ module.exports = {
   rules: {
     'no-bitwise': 'off',
     'no-param-reassign': 'off',
+    'no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        ignoreRestSiblings: true,
+      },
+    ],
     'import/no-extraneous-dependencies': [
       'error',
       {
