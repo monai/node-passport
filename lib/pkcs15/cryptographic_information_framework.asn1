@@ -1,0 +1,984 @@
+CryptographicInformationFramework {iso (1) standard (0) 7816 15 1}
+DEFINITIONS IMPLICIT TAGS ::= BEGIN
+
+IMPORTS
+     informationFramework, authenticationFramework, certificateExtensions, attributeCertificateDefinitions
+          FROM UsefulDefinitions {joint-iso-itu-t (2) ds (5) module (1) usefulDefinitions (0) 7}
+     AttributeCertificate
+          FROM AttributeCertificateDefinitions attributeCertificateDefinitions
+     Name
+          FROM InformationFramework informationFramework
+     Certificate, CertificateSerialNumber, SubjectPublicKeyInfo, AlgorithmIdentifier, Validity
+          FROM AuthenticationFramework authenticationFramework
+     GeneralName, GeneralNames, KeyUsage
+          FROM CertificateExtensions certificateExtensions
+     BiometricInformationTemplate, BiometricInformationTemplateGroup
+          FROM CBEFF-SMARTCARD-BIDO {iso standard 19785 modules (0) types-for-smartcard (8)}
+     ALGORITHM-IDENTIFIER
+          FROM PKCS-5 {iso (1) member-body (2) us (840) rsadsi (113549) pkcs (1) pkcs-5 (5) modules (16) pkcs-5 (1)}
+     ECPoint, Parameters
+          FROM ANSI-X9-62 {iso (1) member-body (2) us (840) ansi-x962 (10045) module (5) 1}
+     DomainParameters
+          FROM ANSI-X9-42 {iso (1) member-body (2) us (840) ansi-x942 (10046) module (5) 1};
+
+-- A.1 Upper and lower bounds
+cia-ub-identifier INTEGER ::= 255
+
+cia-ub-reference INTEGER ::= 255
+
+cia-ub-index   INTEGER ::= 65535
+
+cia-ub-label   INTEGER ::= cia-ub-identifier
+
+cia-lb-minPasswordLength INTEGER ::= 4
+
+cia-ub-minPasswordLength INTEGER ::= 8
+
+cia-ub-storedPasswordLength INTEGER ::= 64
+
+cia-ub-recordLength INTEGER ::= 16383
+
+cia-ub-userConsent INTEGER ::= 32767
+
+cia-ub-securityConditions INTEGER ::= 255
+
+cia-ub-biometricTypes INTEGER ::= 127
+
+cia-ub-storedVerifDataValueNumber INTEGER ::= 8
+
+-- A.2 Basic types
+-- A.2.1
+Identifier ::= OCTET STRING (SIZE (0..cia-ub-identifier))
+
+-- A.2.2
+Reference ::= CHOICE {
+    uniqueByteRef  INTEGER (0..cia-ub-reference),
+    multiByteRef   [1] OCTET STRING (SIZE (4..20))
+}
+
+-- A.2.3
+Label ::= UTF8String (SIZE (0..cia-ub-label))
+
+-- A.2.4
+CredentialIdentifier {KEY-IDENTIFIER: IdentifierSet} ::= SEQUENCE {
+    idType         KEY-IDENTIFIER.&id ({IdentifierSet}),
+    idValue        KEY-IDENTIFIER.&Value ({IdentifierSet} {@idType})
+}
+
+KeyIdentifiers KEY-IDENTIFIER ::= {
+    issuerAndSerialNumber |
+    issuerAndSerialNumberHash |
+    subjectKeyId |
+    subjectKeyHash |
+    issuerKeyHash |
+    issuerNameHash |
+    subjectNameHash |
+    pgp2KeyId |
+    openPGPKeyId |
+    certificateHolderReference,
+    ... -- For future extensions
+}
+
+KEY-IDENTIFIER ::= CLASS {
+    &id            INTEGER UNIQUE,
+    &Value
+}
+WITH SYNTAX {
+    SYNTAX &Value IDENTIFIED BY &id
+}
+
+IssuerAndSerialNumber ::= SEQUENCE {
+    issuer         Name,
+    serialNumber   CertificateSerialNumber
+}
+
+issuerAndSerialNumber KEY-IDENTIFIER ::= {SYNTAX IssuerAndSerialNumber IDENTIFIED BY 1}
+
+issuerAndSerialNumberHash KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 3}
+
+-- Assumes SHA-1 hash of DER encoding of IssuerAndSerialNumber
+subjectKeyId   KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 2}
+
+-- From ISO/IEC 9594-8 certificate extension
+subjectKeyHash KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 4}
+
+issuerKeyHash  KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 5}
+
+issuerNameHash KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 6}
+
+-- SHA-1 hash of DER-encoded issuer name
+subjectNameHash KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 7}
+
+-- SHA-1 hash of DER-encoded subject name
+pgp2KeyId      KEY-IDENTIFIER ::= {SYNTAX OCTET STRING (SIZE (8)) IDENTIFIED BY 8}
+
+openPGPKeyId   KEY-IDENTIFIER ::= {SYNTAX OCTET STRING (SIZE (8)) IDENTIFIED BY 9}
+
+certificateHolderReference KEY-IDENTIFIER ::= {SYNTAX OCTET STRING IDENTIFIED BY 10}
+
+-- A.2.5
+ReferencedValue ::= CHOICE {
+    path           Path,
+    url            URL
+} -- The syntax of the object is determined by the context
+
+URL ::= CHOICE {
+    url            CHOICE {
+        printable      PrintableString,
+        ia5            IA5String
+    },
+    urlWithDigest  [3] SEQUENCE {
+        url            IA5String,
+        digest         DigestInfoWithDefault
+    }
+}
+
+alg-id-sha1    AlgorithmIdentifier {{DigestAlgorithms}} ::= {algorithm id-sha1, parameters SHA1Parameters: NULL}
+
+id-sha1        OBJECT IDENTIFIER ::= {iso (1) identified-organization (3) oiw (14) secsig (3) algorithms (2) 26}
+
+SHA1Parameters ::= NULL
+
+DigestInfoWithDefault ::= SEQUENCE {
+    digestAlg      AlgorithmIdentifier {{DigestAlgorithms}} DEFAULT alg-id-sha1,
+    digest         OCTET STRING (SIZE (8..128))
+}
+
+DigestAlgorithms ALGORITHM-IDENTIFIER ::= {
+    {NULL IDENTIFIED BY sha-1}, ... -- For future extensions
+}
+
+Path ::= SEQUENCE {
+    efidOrTagChoice CHOICE {
+        efidOrPath     OCTET STRING,
+        tagRef         [0] SEQUENCE {
+            tag            OCTET STRING,
+            efidOrPath     OCTET STRING OPTIONAL
+        },
+        appFileRef     [1] SEQUENCE {
+            aid            [APPLICATION 15] OCTET STRING,
+            efidOrpath     OCTET STRING
+        },
+        appTagRef      [2] SEQUENCE {
+            aid            [APPLICATION 15] OCTET STRING,
+            tag            OCTET STRING,
+            efidOrPath     OCTET STRING OPTIONAL
+        }
+    },
+    index          INTEGER (0..cia-ub-index) OPTIONAL,
+    length         [0] INTEGER (0..cia-ub-index) OPTIONAL
+} (WITH COMPONENTS {
+    ...,
+    index          PRESENT,
+    length         PRESENT
+} | WITH COMPONENTS {
+    ...,
+    index          ABSENT,
+    length         ABSENT
+})
+
+-- A.2.6
+ObjectValue {Type} ::= CHOICE {
+    indirect       ReferencedValue,
+    direct         [0] Type
+}
+
+-- A.2.7
+PathOrObjects {ObjectType} ::= CHOICE {
+    path           Path,
+    objects        [0] SEQUENCE OF ObjectType,
+    ... -- For future extensions
+}
+
+-- A.2.8
+CommonObjectAttributes ::= SEQUENCE {
+    label          Label OPTIONAL,
+    flags          CommonObjectFlags OPTIONAL,
+    authId         Identifier OPTIONAL,
+    userConsent    INTEGER (1..cia-ub-userConsent) OPTIONAL,
+    accessControlRules SEQUENCE SIZE (1..MAX) OF AccessControlRule OPTIONAL,
+    ... -- For future extensions
+} (CONSTRAINED BY { -- authId should be present if flags.private is set.
+-- It shall equal an authID in one authentication object in the AOD --
+})
+
+CommonObjectFlags ::= BIT STRING {
+                   private (0),
+                   modifiable (1),
+                   internal (2)
+               }  -- Bit (2) is present for historical reasons and shall not be used
+
+AccessControlRule ::= SEQUENCE {
+    accessMode     AccessMode,
+    securityCondition SecurityCondition,
+    communicationMode CommunicationMode OPTIONAL,
+    lifeCycleStatus LifeCycleStatus OPTIONAL,
+    verifLimitDates RangeOfDate OPTIONAL,
+    ... -- For future extensions
+}
+
+AccessMode ::= BIT STRING {
+                   read (0),
+                   update (1),
+                   execute (2),
+                   delete (3),
+                   attribute (4),
+                   pso_cds (5),
+                   pso_verif (6),
+                   pso_dec (7),
+                   pso_enc (8),
+                   int_auth (9),
+                   ext_auth (10)
+               }
+
+SecurityCondition ::= CHOICE {
+    always         NULL,
+    authId         Identifier,
+    authReference  AuthReference,
+    not            [0] SecurityCondition,
+    and            [1] SEQUENCE SIZE (2..cia-ub-securityConditions) OF SecurityCondition,
+    or             [2] SEQUENCE SIZE (2..cia-ub-securityConditions) OF SecurityCondition,
+    ... -- For future extensions
+}
+
+AuthReference ::= SEQUENCE {
+    authMethod     AuthMethod,
+    seIdentifier   INTEGER OPTIONAL
+}
+
+AuthMethod ::= BIT STRING {
+                   secureMessaging (0),
+                   extAuthentication (1),
+                   userAuthentication (2),
+                   always (3)
+               }
+
+CommunicationMode ::= BIT STRING {
+                   contact (0),
+                   contactLess (1),
+                   usb (2),
+                   nfc (3),
+                   contactC6 (4)
+               }
+
+LifeCycleStatus ::= ENUMERATED {
+                   creation (0),
+                   init (1),
+                   op-activated (2),
+                   op-deactivated (3),
+                   termination (4),
+                   proprietary (5),
+                   ...
+               }
+
+RangeOfDate ::= SEQUENCE {
+    startDate      GeneralizedTime OPTIONAL,
+    endDate        [0] GeneralizedTime OPTIONAL
+}
+
+-- A.2.9
+CommonKeyAttributes ::= SEQUENCE {
+    iD             Identifier,
+    usage          KeyUsageFlags,
+    native         BOOLEAN DEFAULT TRUE,
+    accessFlags    KeyAccessFlags OPTIONAL,
+    keyReference   KeyReference OPTIONAL,
+    startDate      GeneralizedTime OPTIONAL,
+    endDate        [0] GeneralizedTime OPTIONAL,
+    algReference   [1] SEQUENCE OF Reference OPTIONAL,
+    ... -- For future extensions
+}
+
+KeyUsageFlags ::= BIT STRING {
+                   encipher (0),
+                   decipher (1),
+                   sign (2),
+                   signRecover (3),
+                   keyEncipher (4),
+                   keyDecipher (5),
+                   verify (6),
+                   verifyRecover (7),
+                   derive (8),
+                   nonRepudiation (9)
+               }
+
+KeyAccessFlags ::= BIT STRING {
+                   sensitive (0),
+                   extractable (1),
+                   alwaysSensitive (2),
+                   neverExtractable (3),
+                   cardGenerated (4)
+               }
+
+KeyReference ::= INTEGER
+
+-- A.2.10
+CommonPrivateKeyAttributes ::= SEQUENCE {
+    name           Name OPTIONAL,
+    keyIdentifiers [0] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+    generalName    [1] GeneralNames OPTIONAL,
+    keyUsageConstraints [2] KeyUsageConstraints OPTIONAL,
+    ... -- For future extensions
+} (CONSTRAINED BY {-- if keyUsageConstraints present, CommonObjectAttributes.userConsent should be set--})
+
+KeyUsageConstraints ::= SEQUENCE {
+    keyUsageConstraintsFlag BIT STRING {immediateUsage (0)},
+    refOID         OBJECT IDENTIFIER OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.2.11
+CommonPublicKeyAttributes ::= SEQUENCE {
+    name           Name OPTIONAL,
+    trustedUsage   [0] Usage OPTIONAL,
+    generalName    [1] GeneralNames OPTIONAL,
+    keyIdentifiers [2] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.2.12
+CommonSecretKeyAttributes ::= SEQUENCE {
+    keyLen         INTEGER OPTIONAL, -- keylength (in bits)
+    ... -- For future extensions
+}
+
+-- A.2.13
+GenericKeyAttributes ::= SEQUENCE {
+    keyType        CIO-ALGORITHM.&objectIdentifier ({AllowedAlgorithms}),
+    keyAttr        CIO-ALGORITHM.&Parameters ({AllowedAlgorithms} {@keyType})
+}
+
+AllowedAlgorithms CIO-ALGORITHM ::= {...}
+
+-- A.2.14
+KeyInfo {ParameterType, OperationsType} ::= CHOICE {
+    paramsAndOps   SEQUENCE {
+        parameters     ParameterType,
+        operations     OperationsType OPTIONAL
+    },
+    reference      Reference -- Historical, not to be used
+}
+
+-- A.2.15
+CommonCertificateAttributes ::= SEQUENCE {
+    iD             Identifier,
+    authority      BOOLEAN DEFAULT FALSE,
+    identifier     CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+    certHash       [0] CertHash OPTIONAL,
+    trustedUsage   [1] Usage OPTIONAL,
+    identifiers    [2] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+    validity       [4] Validity OPTIONAL,
+    ...
+} -- Context tag [3] is reserved for historical reasons
+
+Usage ::= SEQUENCE {
+    keyUsage       KeyUsage OPTIONAL,
+    extKeyUsage    SEQUENCE SIZE (1..MAX) OF OBJECT IDENTIFIER OPTIONAL,
+    ...
+} (WITH COMPONENTS {
+    ...,
+    keyUsage       PRESENT
+} | WITH COMPONENTS {
+    ...,
+    extKeyUsage    PRESENT
+})
+
+CertHash ::= SEQUENCE {
+    hashAlg        [0] EXPLICIT AlgorithmIdentifier OPTIONAL,
+    certId         [1] EXPLICIT CertId OPTIONAL,
+    hashVal        BIT STRING
+} (CONSTRAINED BY {-- hashVal is calculated over the whole DER-encoded certificate --})
+
+CertId ::= SEQUENCE {
+    issuer         GeneralName,
+    serialNumber   CertificateSerialNumber
+}
+
+-- A.2.16
+GenericCertificateAttributes ::= SEQUENCE {
+    certType       CIO-OPAQUE.&id ({AllowedCertificates}),
+    certAttr       CIO-OPAQUE.&Type ({AllowedCertificates} {@certType})
+}
+
+AllowedCertificates CIO-OPAQUE ::= {...}
+
+-- A.2.17
+CommonDataContainerObjectAttributes ::= SEQUENCE {
+    applicationName Label OPTIONAL,
+    applicationOID OBJECT IDENTIFIER OPTIONAL,
+    iD             Identifier OPTIONAL,
+    ... -- For future extensions
+} (WITH COMPONENTS {
+    ...,
+    applicationName PRESENT
+} | WITH COMPONENTS {
+    ...,
+    applicationOID PRESENT
+})
+
+-- A.2.18
+CommonAuthenticationObjectAttributes ::= SEQUENCE {
+    authId         Identifier OPTIONAL,
+    authReference  Reference OPTIONAL,
+    seIdentifier   [0] Reference OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.2.19
+CIO {ClassAttributes, SubClassAttributes, TypeAttributes} ::= SEQUENCE {
+    commonObjectAttributes CommonObjectAttributes,
+    classAttributes ClassAttributes,
+    subClassAttributes [0] SubClassAttributes OPTIONAL,
+    typeAttributes [1] TypeAttributes
+}
+
+-- A.3 CIOs
+CIOChoice ::= CHOICE {
+    privateKeys    [0] PrivateKeys,
+    publicKeys     [1] PublicKeys,
+    trustedPublicKeys [2] PublicKeys,
+    secretKeys     [3] SecretKeys,
+    certificates   [4] Certificates,
+    trustedCertificates [5] Certificates,
+    usefulCertificates [6] Certificates,
+    dataContainerObjects [7] DataContainerObjects,
+    authObjects    [8] AuthObjects,
+    ... -- For future extensions
+}
+
+PrivateKeys ::= PathOrObjects {PrivateKeyChoice}
+
+PublicKeys ::= PathOrObjects {PublicKeyChoice}
+
+SecretKeys ::= PathOrObjects {SecretKeyChoice}
+
+Certificates ::= PathOrObjects {CertificateChoice}
+
+DataContainerObjects ::= PathOrObjects {DataContainerObjectChoice}
+
+AuthObjects ::= PathOrObjects {AuthenticationObjectChoice}
+
+-- A.4 Private key information objects
+-- A.4.1
+PrivateKeyChoice ::= CHOICE {
+    privateRSAKey  PrivateKeyObject {PrivateRSAKeyAttributes},
+    privateECKey   [0] PrivateKeyObject {PrivateECKeyAttributes},
+    privateDHKey   [1] PrivateKeyObject {PrivateDHKeyAttributes},
+    privateDSAKey  [2] PrivateKeyObject {PrivateDSAKeyAttributes},
+    privateKEAKey  [3] PrivateKeyObject {PrivateKEAKeyAttributes},
+    genericPrivateKey [4] PrivateKeyObject {GenericKeyAttributes},
+    ... -- For future extensions
+}
+
+PrivateKeyObject {KeyAttributes} ::= CIO {CommonKeyAttributes, CommonPrivateKeyAttributes, KeyAttributes}
+
+-- A.4.2
+PrivateRSAKeyAttributes ::= SEQUENCE {
+    value          Path,
+    modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+    keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.4.3
+PrivateECKeyAttributes ::= SEQUENCE {
+    value          Path,
+    keyInfo        KeyInfo {Parameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.4.4
+PrivateDHKeyAttributes ::= SEQUENCE {
+    value          Path,
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.4.5
+PrivateDSAKeyAttributes ::= SEQUENCE {
+    value          Path,
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.4.6
+PrivateKEAKeyAttributes ::= SEQUENCE {
+    value          Path,
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.5 Public key information objects
+-- A.5.1
+PublicKeyChoice ::= CHOICE {
+    publicRSAKey   PublicKeyObject {PublicRSAKeyAttributes},
+    publicECKey    [0] PublicKeyObject {PublicECKeyAttributes},
+    publicDHKey    [1] PublicKeyObject {PublicDHKeyAttributes},
+    publicDSAKey   [2] PublicKeyObject {PublicDSAKeyAttributes},
+    publicKEAKey   [3] PublicKeyObject {PublicKEAKeyAttributes},
+    genericPublicKey [4] PublicKeyObject {GenericKeyAttributes},
+    ... -- For future extensions
+}
+
+PublicKeyObject {KeyAttributes} ::= CIO {CommonKeyAttributes, CommonPublicKeyAttributes, KeyAttributes}
+
+-- A.5.2
+PublicRSAKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {RSAPublicKeyChoice},
+    modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+    keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+RSAPublicKeyChoice ::= CHOICE {
+    raw            RSAPublicKey,
+    spki           [1] SubjectPublicKeyInfo, -- See ISO/IEC 9594-8. Must contain a public RSA key.
+    ...
+}
+
+RSAPublicKey ::= SEQUENCE {
+    modulus        INTEGER,
+    publicExponent INTEGER
+}
+
+-- A.5.3
+PublicECKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {ECPublicKeyChoice},
+    keyInfo        KeyInfo {Parameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+ECPublicKeyChoice ::= CHOICE {
+    raw            ECPoint, -- See ANSI X9.62,
+    spki           SubjectPublicKeyInfo, -- See ISO/IEC 9594-8. Must contain a public elliptic curve key
+    ...
+}
+
+-- A.5.4
+PublicDHKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {DHPublicKeyChoice},
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+DHPublicKeyChoice ::= CHOICE {
+    raw            DHPublicNumber,
+    spki           SubjectPublicKeyInfo, -- See ISO/IEC 9594-8. Must contain a public D-H key.
+    ...
+}
+
+DHPublicNumber ::= INTEGER
+
+-- A.5.5
+PublicDSAKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {DSAPublicKeyChoice},
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+DSAPublicKeyChoice ::= CHOICE {
+    raw            DSAPublicKey,
+    spki           SubjectPublicKeyInfo, -- See ISO/IEC 9594-8. Must contain a public DSA key.
+    ...
+}
+
+DSAPublicKey ::= INTEGER
+
+-- A.5.6
+PublicKEAKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {KEAPublicKeyChoice},
+    keyInfo        KeyInfo {DomainParameters, PublicKeyOperations} OPTIONAL,
+    ... -- For future extensions
+}
+
+KEAPublicKeyChoice ::= CHOICE {
+    raw            KEAPublicKey,
+    spki           SubjectPublicKeyInfo, -- See ISO/IEC 9594-8. Must contain a public KEA key.
+    ...
+}
+
+KEAPublicKey ::= INTEGER
+
+-- A.6 Secret key information objects
+-- A.6.1
+SecretKeyChoice ::= CHOICE {
+    algIndependentKey SecretKeyObject {SecretKeyAttributes},
+    genericSecretKey [15] SecretKeyObject {GenericKeyAttributes},
+    ... -- For future extensions
+} -- Note: Context tags [0] – [14] historical and not to be used
+
+SecretKeyObject {KeyAttributes} ::= CIO {CommonKeyAttributes, CommonSecretKeyAttributes, KeyAttributes}
+
+-- A.6.2
+SecretKeyAttributes ::= SEQUENCE {
+    value          ObjectValue {OCTET STRING},
+    ... -- For future extensions
+}
+
+-- A.7 Certificate information objects
+-- A.7.1
+CertificateChoice ::= CHOICE {
+    x509Certificate CertificateObject {X509CertificateAttributes},
+    x509AttributeCertificate [0] CertificateObject {X509AttributeCertificateAttributes},
+    spkiCertificate [1] CertificateObject {SPKICertificateAttributes},
+    pgpCertificate [2] CertificateObject {PGPCertificateAttributes},
+    wtlsCertificate [3] CertificateObject {WTLSCertificateAttributes},
+    x9-68Certificate [4] CertificateObject {X9-68CertificateAttributes},
+    cvCertificate  [5] CertificateObject {CVCertificateAttributes},
+    genericCertificateObject [6] CertificateObject {GenericCertificateAttributes},
+    ... -- For future extensions
+}
+
+CertificateObject {CertAttributes} ::= CIO {CommonCertificateAttributes, NULL, CertAttributes}
+
+-- A.7.2
+X509CertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {Certificate},
+    subject        Name OPTIONAL,
+    issuer         [0] Name OPTIONAL,
+    serialNumber   CertificateSerialNumber OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.7.3
+X509AttributeCertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {AttributeCertificate},
+    issuer         GeneralNames OPTIONAL,
+    serialNumber   CertificateSerialNumber OPTIONAL,
+    attrTypes      [0] SEQUENCE OF OBJECT IDENTIFIER OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.7.4
+SPKICertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {CIO-OPAQUE.&Type},
+    ... -- For future extensions
+}
+
+-- A.7.5
+PGPCertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {CIO-OPAQUE.&Type},
+    ... -- For future extensions
+}
+
+-- A.7.6
+WTLSCertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {CIO-OPAQUE.&Type},
+    ... -- For future extensions
+}
+
+-- A.7.7
+X9-68CertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {CIO-OPAQUE.&Type},
+    ... -- For future extensions
+}
+
+-- A.7.8
+CVCertificateAttributes ::= SEQUENCE {
+    value          ObjectValue {CIO-OPAQUE.&Type},
+    certificationAuthorityReference OCTET STRING OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.8 Data container information objects
+-- A.8.1
+DataContainerObjectChoice ::= CHOICE {
+    opaqueDO       DataContainerObject {OpaqueDOAttributes},
+    iso7816DO      [0] DataContainerObject {ISO7816DOAttributes},
+    oidDO          [1] DataContainerObject {OidDOAttributes},
+    ... -- For future extensions
+}
+
+DataContainerObject {DataObjectAttributes} ::= CIO {CommonDataContainerObjectAttributes, NULL, DataObjectAttributes}
+
+-- A.8.2
+OpaqueDOAttributes ::= ObjectValue {CIO-OPAQUE.&Type}
+
+-- A.8.3
+ISO7816DOAttributes ::= ObjectValue {CIO-OPAQUE.&Type} (CONSTRAINED BY {-- All such data container objects shall be defined in accordance with ISO/IEC 7816-4 --})
+
+-- A.8.4
+OidDOAttributes ::= SEQUENCE {
+    id             CIO-OPAQUE.&id ({AllowedOidDOs}),
+    value          CIO-OPAQUE.&Type ({AllowedOidDOs} {@id})
+}
+
+AllowedOidDOs  CIO-OPAQUE ::= {...}
+
+-- A.9 Authentication information objects
+-- A.9.1
+AuthenticationObjectChoice ::= CHOICE {
+    pwd            AuthenticationObject {PasswordAttributes},
+    biometricTemplate [0] AuthenticationObject {BiometricAttributes},
+    authKey        [1] AuthenticationObject {AuthKeyAttributes},
+    external       [2] AuthenticationObject {ExternalAuthObjectAttributes},
+    internal       [3] AuthenticationObject {InternalAuthObjectAttributes},
+    ... -- For future extensions
+}
+
+AuthenticationObject {AuthObjectAttributes} ::= CIO {CommonAuthenticationObjectAttributes, NULL, AuthObjectAttributes}
+
+-- A.9.2
+PasswordAttributes ::= SEQUENCE {
+    pwdFlags       PasswordFlags,
+    pwdType        PasswordType,
+    minLength      INTEGER (cia-lb-minPasswordLength..cia-ub-minPasswordLength),
+    storedLength   INTEGER (0..cia-ub-storedPasswordLength),
+    maxLength      INTEGER OPTIONAL,
+    pwdReference   [0] Reference DEFAULT 0,
+    padChar        OCTET STRING (SIZE (1)) OPTIONAL,
+    lastPasswordChange GeneralizedTime OPTIONAL,
+    path           Path OPTIONAL,
+    verifDataHistoryLength [1] INTEGER (0..cia-ub-storedVerifDataValueNumber) OPTIONAL,
+    cioSecurityId  [2] INTEGER OPTIONAL,
+    ... -- For future extensions
+}
+
+PasswordFlags ::= BIT STRING {
+                   case-sensitive (0),
+                   local (1),
+                   change-disabled (2),
+                   unblock-disabled (3),
+                   initialized (4),
+                   needs-padding (5),
+                   unblockingPassword (6),
+                   soPassword (7),
+                   disable-allowed (8),
+                   integrity-protected (9),
+                   confidentiality-protected (10),
+                   exchangeRefData (11),
+                   resetRetryCounter1 (12),
+                   resetRetryCounter2 (13),
+                   context-dependent (14),
+                   multiStepProtocol (15)
+               } (CONSTRAINED BY {-- ‘unblockingPassword’ and ‘soPassword’ cannot both be set, and ‘contextdependent’supersedes both ‘integrity-protected’ and ‘confidentiality-protected’ when set--})
+
+PasswordType ::= ENUMERATED {
+                   bcd,
+                   ascii-numeric,
+                   utf8,
+                   half-nibble-bcd,
+                   iso9564-1,
+                   ...
+               }
+
+-- A.9.3
+BiometricAttributes ::= CHOICE {
+    biometricTemplateAttributes BiometricTemplateAttributes,
+    bit            [APPLICATION 96] BiometricInformationTemplate,
+    bitGroup       [APPLICATION 97] BiometricInformationTemplateGroup
+}
+
+BiometricInformationTemplate ::= CHOICE {
+    biometricInformationTemplate OCTET STRING,
+    --Shall contain an ISO/IEC 7816-11 Biometric Information Template value
+    SEQUENCE {
+        maxBITLength   INTEGER OPTIONAL,
+        biometricInformationTemplate OCTET STRING
+    --Shall contain an ISO/IEC 7816-11 BiometricInformationTemplate value
+    }
+}
+
+BiometricInformationTemplateGroup ::= OCTET STRING
+
+-- Shall contain an ISO/IEC 7816-11 Biometric Information Template group template value
+BiometricTemplateAttributes ::= SEQUENCE {
+    bioFlags       BiometricFlags,
+    templateId     BiometricTemplateIdentifier,
+    bioType        BiometricType,
+    bioReference   Reference DEFAULT 0,
+    lastChange     GeneralizedTime OPTIONAL,
+    path           Path OPTIONAL,
+    ... -- For future extensions
+}
+
+BiometricTemplateIdentifier ::= CHOICE {
+    oid            OBJECT IDENTIFIER,
+    issuerId       OCTET STRING,
+    ... -- For future extensions
+}
+
+BiometricFlags ::= BIT STRING {
+                   local (1),
+                   change-disabled (2),
+                   unblock-disabled (3),
+                   initialized (4),
+                   disable-allowed (8),
+                   integrity-protected (9),
+                   confidentiality-protected (10)
+               }
+
+BiometricType ::= CHOICE {
+    fingerPrint    FingerPrintInformation,
+    iris           [0] IrisInformation,
+    chained        [1] SEQUENCE SIZE (2..cia-ub-biometricTypes) OF BiometricType,
+    ... -- For future extensions
+}
+
+FingerPrintInformation ::= SEQUENCE {
+    hand           ENUMERATED {
+                       left,
+                       right
+                   },
+    finger         ENUMERATED {
+                       thumb,
+                       pointerFinger,
+                       middleFinger,
+                       ringFinger,
+                       littleFinger
+                   }
+}
+
+IrisInformation ::= SEQUENCE {
+    eye            ENUMERATED {
+                       left,
+                       right
+                   },
+    ... -- For future extensions
+}
+
+-- A.9.4
+ExternalAuthObjectAttributes ::= CHOICE {
+    authKeyAttributes AuthKeyAttributes,
+    certBasedAttributes [0] CertBasedAuthenticationAttributes,
+    ... -- For future extensions
+}
+
+InternalAuthObjectAttributes ::= SEQUENCE {
+    cioSecurityId  INTEGER OPTIONAL,
+    authKeyAttributes AuthKeyAttributes,
+    ... -- For future extensions
+} (CONSTRAINED BY {-- at least one out of protocol and description attributes shall be present --})
+
+AuthKeyAttributes ::= SEQUENCE {
+    derivedKey     BOOLEAN DEFAULT TRUE,
+    authKeyId      Identifier,
+    ... -- For future extensions
+}
+
+CertBasedAuthenticationAttributes ::= SEQUENCE {
+    cha            OCTET STRING,
+    cioSecurityId  INTEGER OPTIONAL,
+    ... -- For future extensions
+}
+
+-- A.10 Cryptographic and card information
+CIAInfo ::= SEQUENCE {
+    version        INTEGER {
+                       v1 (0),
+                       v2 (1)
+                   } (v1 | v2, ...),
+    serialNumber   OCTET STRING OPTIONAL,
+    manufacturerID Label OPTIONAL,
+    label          [0] Label OPTIONAL,
+    cardflags      CardFlags,
+    seInfo         SEQUENCE OF SecurityEnvironmentInfo OPTIONAL,
+    recordInfo     [1] RecordInfo OPTIONAL,
+    supportedAlgorithms [2] SEQUENCE OF AlgorithmInfo OPTIONAL,
+    issuerId       [3] Label OPTIONAL,
+    holderId       [4] Label OPTIONAL,
+    lastUpdate     [5] LastUpdate OPTIONAL,
+    preferredLanguage PrintableString OPTIONAL, -- In accordance with IETF RFC 5646
+    profileIndication [6] SEQUENCE OF ProfileIndication OPTIONAL,
+    ... -- For future extensions
+} (CONSTRAINED BY {-- Each AlgorithmInfo.reference value shall be unique --})
+
+CardFlags ::= BIT STRING {
+                   readonly (0),
+                   authRequired (1),
+                   prnGeneration (2)
+               }  -- Bit (3) is reserved for historical reasons
+
+SecurityEnvironmentInfo ::= SEQUENCE {
+    se             INTEGER,
+    owner          OBJECT IDENTIFIER OPTIONAL,
+    aid            OCTET STRING (CONSTRAINED BY {-- Must be encoded in accordance with ISO/IEC 7816-4 --}) OPTIONAL,
+    ... -- For future extensions
+}
+
+RecordInfo ::= SEQUENCE {
+    oDRecordLength [0] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    prKDRecordLength [1] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    puKDRecordLength [2] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    sKDRecordLength [3] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    cDRecordLength [4] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    dCODRecordLength [5] INTEGER (0..cia-ub-recordLength) OPTIONAL,
+    aODRecordLength [6] INTEGER (0..cia-ub-recordLength) OPTIONAL
+}
+
+AlgorithmInfo ::= SEQUENCE {
+    reference      Reference,
+    algorithm      CIO-ALGORITHM.&id ({AlgorithmSet}),
+    parameters     CIO-ALGORITHM.&Parameters ({AlgorithmSet} {@algorithm}),
+    supportedOperations CIO-ALGORITHM.&Operations ({AlgorithmSet} {@algorithm}),
+    objId          CIO-ALGORITHM.&objectIdentifier ({AlgorithmSet} {@algorithm}),
+    algRef         Reference OPTIONAL
+}
+
+CIO-ALGORITHM ::= CLASS {
+    &id            INTEGER UNIQUE,
+    &Parameters,
+    &Operations    Operations,
+    &objectIdentifier OBJECT IDENTIFIER OPTIONAL
+}
+WITH SYNTAX {
+    PARAMETERS &Parameters OPERATIONS &Operations ID &id [OID &objectIdentifier]
+}
+
+CIO-OPAQUE ::= TYPE-IDENTIFIER
+
+PublicKeyOperations ::= Operations
+
+Operations ::= BIT STRING {
+                   compute-checksum (0), -- H/W computation of checksum
+                   compute-signature (1), -- H/W computation of signature
+                   verify-checksum (2), -- H/W verification of checksum
+                   verify-signature (3), -- H/W verification of signature
+                   encipher (4), -- H/W encryption of data
+                   decipher (5), -- H/W decryption of data
+                   hash (6), -- H/W hashing
+                   generate-key (7), -- H/W key generation
+                   derive-key (8) -- H/W key derivation
+               }
+
+cia-alg-null   CIO-ALGORITHM ::= {PARAMETERS NULL OPERATIONS {{generate-key}} ID -1}
+
+AlgorithmSet   CIO-ALGORITHM ::= {
+    cia-alg-null,
+    ... -- See PKCS #11 for possible values for the &id component (and parameters)
+}
+
+LastUpdate ::= CHOICE {
+    generalizedTime GeneralizedTime,
+    referencedTime ReferencedValue,
+    ... -- For future extensions
+} (CONSTRAINED BY {-- The value for referencedTime shall be of type GeneralizedTime --})
+
+ProfileIndication ::= CHOICE {
+    profileOID     OBJECT IDENTIFIER,
+    profileName    UTF8String,
+    ... -- For future extensions
+}
+
+-- A.11 CIO DDO
+CIODDO ::= SEQUENCE {
+    providerId     OBJECT IDENTIFIER OPTIONAL,
+    odfPath        Path OPTIONAL,
+    ciaInfoPath    [0] Path OPTIONAL,
+    aid            [APPLICATION 15] OCTET STRING (CONSTRAINED BY {-- Must be an AID in accordance with ISO/IEC 7816-4--}) OPTIONAL,
+    securityFileOrObject SET OF SecurityFileOrObject OPTIONAL,
+    ... -- For future extensions
+} -- Context tag 1 is historical and shall not be used
+
+SecurityFileOrObject ::= SEQUENCE {
+    label          Label OPTIONAL,
+    communicationMode CommunicationMode OPTIONAL,
+    fileOrObjectPath Path,
+    protocol       OBJECT IDENTIFIER OPTIONAL,
+    cioSecurityId  INTEGER OPTIONAL,
+    index          [0] INTEGER (0..cia-ub-index) OPTIONAL,
+    precondition   [1] INTEGER (0..cia-ub-index) OPTIONAL,
+    ... -- For future extensions
+}
+
+END
