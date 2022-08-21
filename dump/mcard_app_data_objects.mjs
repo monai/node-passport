@@ -14,7 +14,7 @@ import fciTemplate from '../lib/iso7816/templates/file_control_information/fci.m
 import efDirTemplate from '../lib/pkcs15/templates/ef_dir.mjs';
 import efOdTemplate from '../lib/doc9309/templates/ef_od.mjs';
 import efCiainfoTemplate from '../lib/doc9309/templates/ef_ciainfo.mjs';
-import paceInfoTemplate from '../lib/doc9309/templates/pace_info.mjs';
+import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pace.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 
 dotenv.config();
@@ -73,7 +73,7 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    printBer(res.data, { noTail: true, template: paceInfoTemplate });
+    printBer(res.data, { noTail: true, template: securityInfosForPace });
   }
 
   const can = Buffer.from(process.env.LITEID_2021_CAN);
