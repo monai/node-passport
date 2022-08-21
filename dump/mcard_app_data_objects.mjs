@@ -12,8 +12,8 @@ import { main, printError } from './util.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
 import fciTemplate from '../lib/iso7816/templates/file_control_information/fci.mjs';
 import efDirTemplate from '../lib/pkcs15/templates/ef_dir.mjs';
-import efOdTemplate from '../lib/doc9309/templates/ef_od.mjs';
-import ciainfoTemplate from '../lib/doc9309/templates/ciainfo.mjs';
+import cioChoice from '../lib/doc9309/templates/cio_choice.mjs';
+import ciaInfoTemplate from '../lib/doc9309/templates/cia_info.mjs';
 import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pace.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 
@@ -105,7 +105,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: ciainfoTemplate, noTail: true });
+  printBer(res, { template: ciaInfoTemplate, noTail: true });
 
   console.log('= Select EF.OD: 5031');
   res = await select(secureReader, 0x00, 0x00, { data: '5031', le: 0x100 });
@@ -117,7 +117,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: efOdTemplate, noTail: true });
+  printBer(res, { template: cioChoice, noTail: true });
 
   console.log('= Select EF.PrKD: 1f01');
   res = await select(secureReader, 0x00, 0x00, { data: '1f01', le: 0x100 });
