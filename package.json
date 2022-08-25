@@ -15,11 +15,12 @@
   "author": "monai",
   "license": "ISC",
   "engines": {
-    "node": "14"
+    "node": "18"
   },
   "dependencies": {
-    "@monai/pace": "^3.0.0",
-    "@pokusew/pcsclite": "^0.6.0",
+    "@monai/pace": "^3.0.1",
+    "@monai/pace-v2": "npm:@monai/pace@^2.0.0",
+    "@alba/pcsclite": "git+https://github.com/alba-ado/node-pcsclite.git",
     "dotenv": "^16.0.0",
     "minimist": "^1.2.6",
     "node-aes-cmac": "^0.1.1",
