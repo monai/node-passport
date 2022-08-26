@@ -15,9 +15,11 @@ import efDirTemplate from '../lib/pkcs15/templates/ef_dir.mjs';
 import privateKeyChoiceTemplate from '../lib/pkcs15/templates/private_key_choice.mjs';
 import publicKeyChoiceTemplate from '../lib/pkcs15/templates/public_key_choice.mjs';
 import certificateChoiceTemplate from '../lib/pkcs15/templates/certificate_choice.mjs';
+import authenticationObjectChoiceTemplate from '../lib/pkcs15/templates/authentication_object_choice.mjs';
 import cioChoice from '../lib/doc9309/templates/cio_choice.mjs';
 import ciaInfoTemplate from '../lib/doc9309/templates/cia_info.mjs';
 import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pace.mjs';
+import subjectPublicKeyInfoTemplate from '../lib/x509/templates/subject_public_key_info.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 
 dotenv.config();
@@ -168,7 +170,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { noTail: true });
+  printBer(res, { template: authenticationObjectChoiceTemplate, noTail: true });
 
   console.log('= Select Public Key "Signature Key 1 QES": 1f07');
   res = await select(secureReader, 0x00, 0x00, { data: '1f07', le: 0x100 });
@@ -180,7 +182,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { noTail: true });
+  printBer(res, { template: subjectPublicKeyInfoTemplate, noTail: true });
 
   console.log('= Select Public Key "Signature Key 2": 1f0b');
   res = await select(secureReader, 0x00, 0x00, { data: '1f0b', le: 0x100 });
@@ -192,7 +194,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { noTail: true });
+  printBer(res, { template: subjectPublicKeyInfoTemplate, noTail: true });
 
   console.log('= Select Certificate "Signature Key 1 QES": 1f06');
   res = await select(secureReader, 0x00, 0x00, { data: '1f06', le: 0x100 });
