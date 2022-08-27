@@ -12,10 +12,10 @@ import { main, printError } from './util.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
 import fciTemplate from '../lib/iso7816/templates/file_control_information/fci.mjs';
 import efDirTemplate from '../lib/pkcs15/templates/ef_dir.mjs';
-import privateKeyChoiceTemplate from '../lib/pkcs15/templates/private_key_choice.mjs';
-import publicKeyChoiceTemplate from '../lib/pkcs15/templates/public_key_choice.mjs';
-import certificateChoiceTemplate from '../lib/pkcs15/templates/certificate_choice.mjs';
-import authenticationObjectChoiceTemplate from '../lib/pkcs15/templates/authentication_object_choice.mjs';
+import privateKeyChoiceType from '../lib/pkcs15/templates/private_key_choice.mjs';
+import publicKeyChoiceType from '../lib/pkcs15/templates/public_key_choice.mjs';
+import certificateChoiceType from '../lib/pkcs15/templates/certificate_choice.mjs';
+import authenticationObjectChoiceType from '../lib/pkcs15/templates/authentication_object_choice.mjs';
 import cioChoice from '../lib/doc9309/templates/cio_choice.mjs';
 import ciaInfoTemplate from '../lib/doc9309/templates/cia_info.mjs';
 import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pace.mjs';
@@ -134,7 +134,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: privateKeyChoiceTemplate, noTail: true });
+  printBer(res, { type: privateKeyChoiceType, noTail: true });
 
   console.log('= Select EF.PuKD: 1f02');
   res = await select(secureReader, 0x00, 0x00, { data: '1f02', le: 0x100 });
@@ -146,7 +146,8 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: publicKeyChoiceTemplate, noTail: true });
+  printBer(res, { type: publicKeyChoiceType, noTail: true });
+
 
   console.log('= Select EF.CD: 1f03');
   res = await select(secureReader, 0x00, 0x00, { data: '1f03', le: 0x100 });
@@ -158,7 +159,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: certificateChoiceTemplate, noTail: true });
+  printBer(res, { type: certificateChoiceType, noTail: true });
 
   console.log('= Select EF.AOD: 1f05');
   res = await select(secureReader, 0x00, 0x00, { data: '1f05', le: 0x100 });
@@ -170,7 +171,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: authenticationObjectChoiceTemplate, noTail: true });
+  printBer(res, { type: authenticationObjectChoiceType, noTail: true });
 
   console.log('= Select Public Key "Signature Key 1 QES": 1f07');
   res = await select(secureReader, 0x00, 0x00, { data: '1f07', le: 0x100 });
