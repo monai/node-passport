@@ -1,20 +1,17 @@
--- ISO/IEC 9594-8:2017 (E)
--- Annex D
-
-PkiPmiExternalDataTypes {joint-iso-itu-t ds (5) module (1) pkiPmiExternalDataTypes (40) 8}
+PkiPmiExternalDataTypes {joint-iso-itu-t ds (5) module (1) pkiPmiExternalDataTypes (40) 9}
 DEFINITIONS ::= BEGIN
 
 -- EXPORTS All
 
 IMPORTS
-     authenticationFramework, certificateExtensions, intSecurity, selectedAttributeTypes
-          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 8}
+     intSecurity
+          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 9} WITH SUCCESSORS
      EXTENSION
-          FROM AuthenticationFramework authenticationFramework
+          FROM AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 9} WITH SUCCESSORS
      GeneralName
-          FROM CertificateExtensions certificateExtensions
+          FROM CertificateExtensions {joint-iso-itu-t ds (5) module (1) certificateExtensions (26) 9} WITH SUCCESSORS
      PresentationAddress
-          FROM SelectedAttributeTypes selectedAttributeTypes;
+          FROM SelectedAttributeTypes {joint-iso-itu-t ds (5) module (1) selectedAttributeTypes (5) 9} WITH SUCCESSORS;
 
 /* The UserNotice data type is referenced by the userNotice extension. It is copied from IETF RFC 5280 */
 UserNotice ::= SEQUENCE {
@@ -67,7 +64,7 @@ id-ad-ocsp     OBJECT IDENTIFIER ::= {id-ad 1}
 /* The following is an abstract of the MTSAbstractService module specified by
 Rec. ITU-T X.411 | ISO/IEC 10021-4.*/
 G3FacsimileNonBasicParameters ::= BIT STRING {
-                   two-dimensional (8), -- As defined in ITU-T Recommendation T.30
+                   two-dimensional (8), -- As defined in Recommendation ITU-T T.30
                    fine-resolution (9),
                    unlimited-length (20), -- These bit values are chosen such that when
                    b4-length (21), -- encoded using ASN.1 Basic Encoding Rules

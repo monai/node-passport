@@ -1,24 +1,22 @@
 -- A.3 - Attribute Certificate Framework module
-AttributeCertificateDefinitions {joint-iso-itu-t ds (5) module (1) attributeCertificateDefinitions (32) 8}
+AttributeCertificateDefinitions {joint-iso-itu-t ds (5) module (1) attributeCertificateDefinitions (32) 9}
 DEFINITIONS IMPLICIT TAGS ::= BEGIN
 
 -- EXPORTS ALL
 
 IMPORTS
-     basicAccessControl, id-at, id-ce, id-mr, informationFramework, authenticationFramework, selectedAttributeTypes, id-oc, certificateExtensions, pkiPmiExternalDataTypes
-          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 8}
-     ATTRIBUTE, Attribute {}, AttributeType, MATCHING-RULE, Name, OBJECT-CLASS, RelativeDistinguishedName, SupportedAttributes, SYNTAX-NAME, top
-          FROM InformationFramework informationFramework
-     AttributeTypeAndValue
-          FROM BasicAccessControl basicAccessControl
+     id-at, id-ce, id-mr, id-oc
+          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 9} WITH SUCCESSORS
+     ATTRIBUTE, Attribute {}, AttributeType, AttributeTypeAndValue, MATCHING-RULE, Name, OBJECT-CLASS, RelativeDistinguishedName, SupportedAttributes, SYNTAX-NAME, top
+          FROM InformationFramework {joint-iso-itu-t ds (5) module (1) informationFramework (1) 9} WITH SUCCESSORS
+     --AttributeTypeAndValue
+     -- FROM BasicAccessControl basicAccessControl
      AlgorithmIdentifier, Certificate, CertificateList, CertificateSerialNumber, EXTENSION, Extensions, InfoSyntax, PolicySyntax, SIGNED {}, SupportedAlgorithms, x509CertificateList
-          FROM AuthenticationFramework authenticationFramework
+          FROM AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 9} WITH SUCCESSORS
      TimeSpecification, UnboundedDirectoryString, UniqueIdentifier
-          FROM SelectedAttributeTypes selectedAttributeTypes
+          FROM SelectedAttributeTypes {joint-iso-itu-t ds (5) module (1) selectedAttributeTypes (5) 9} WITH SUCCESSORS
      certificateListExactMatch, GeneralName, GeneralNames, NameConstraintsSyntax
-          FROM CertificateExtensions certificateExtensions
-     UserNotice
-          FROM PkiPmiExternalDataTypes pkiPmiExternalDataTypes;
+          FROM CertificateExtensions {joint-iso-itu-t ds (5) module (1) certificateExtensions (26) 9} WITH SUCCESSORS;
 
 -- Unless explicitly noted otherwise, there is no significance to the ordering
 -- of components of a SEQUENCE OF construct in this Specification.
@@ -147,7 +145,32 @@ Target ::= CHOICE {
     targetName     [0] GeneralName,
     targetGroup    [1] GeneralName,
     targetCert     [2] TargetCert,
-    SIZE (1..MAX) OF UserNotice IDENTIFIED BY id-ce-userNotice
+    ...
+}
+
+TargetCert ::= SEQUENCE {
+    targetCertificate IssuerSerial,
+    targetName     GeneralName OPTIONAL,
+    certDigestInfo ObjectDigestInfo OPTIONAL
+}
+
+userNotice     EXTENSION ::= {SYNTAX SEQUENCE SIZE (1..MAX) OF UserNotice IDENTIFIED BY id-ce-userNotice}
+
+-- Copied from IETF RFC 5280
+UserNotice ::= SEQUENCE {
+    noticeRef      NoticeReference OPTIONAL,
+    explicitText   DisplayText OPTIONAL
+}
+
+NoticeReference ::= SEQUENCE {
+    organization   DisplayText,
+    noticeNumbers  SEQUENCE OF INTEGER
+}
+
+DisplayText ::= CHOICE {
+    visibleString  VisibleString (SIZE (1..200)),
+    bmpString      BMPString (SIZE (1..200)),
+    utf8String     UTF8String (SIZE (1..200))
 }
 
 acceptablePrivilegePolicies EXTENSION ::= {SYNTAX AcceptablePrivilegePoliciesSyntax IDENTIFIED BY id-ce-acceptablePrivilegePolicies}
@@ -291,14 +314,14 @@ BaseDistance ::= INTEGER (0..MAX)
 pmiUser        OBJECT-CLASS ::= {SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {attributeCertificateAttribute} ID id-oc-pmiUser}
 
 pmiAA          OBJECT-CLASS ::= { -- a PMI AA
-    SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {aACertificate | attributeCertificateRevocationList | attributeAuthorityRevocationList} ID id-oc-pmiAA
+    SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {aACertificate | attributeCertificateRevocationList | eeAttrCertificateRevocationList | attributeAuthorityRevocationList} ID id-oc-pmiAA
 }
 
 pmiSOA         OBJECT-CLASS ::= { -- a PMI Source of Authority
-    SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {attributeCertificateRevocationList | attributeAuthorityRevocationList | attributeDescriptorCertificate} ID id-oc-pmiSOA
+    SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {attributeCertificateRevocationList | eeAttrCertificateRevocationList | attributeAuthorityRevocationList | attributeDescriptorCertificate} ID id-oc-pmiSOA
 }
 
-attCertCRLDistributionPt OBJECT-CLASS ::= {SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {attributeCertificateRevocationList | attributeAuthorityRevocationList} ID id-oc-attCertCRLDistributionPts}
+attCertCRLDistributionPt OBJECT-CLASS ::= {SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {attributeCertificateRevocationList | eeAttrCertificateRevocationList | attributeAuthorityRevocationList} ID id-oc-attCertCRLDistributionPts}
 
 pmiDelegationPath OBJECT-CLASS ::= {SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {delegationPath} ID id-oc-pmiDelegationPath}
 

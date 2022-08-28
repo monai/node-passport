@@ -1,37 +1,52 @@
 -- A.1 - Authentication framework module
-AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 8}
+AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 9}
 DEFINITIONS ::= BEGIN
 
 -- EXPORTS All
--- The types and values defined in this module are exported for use in the other ASN.1
--- modules contained within the Directory Specifications, and for the use of other
--- applications which will use them to access Directory services. Other applications may
--- use them for their own purposes, but this will not constrain extensions and
--- modifications needed to maintain or improve the Directory service.
+/*
+The types and values defined in this module are exported for use in the other ASN.1
+modules contained within the Directory Specifications, and for the use of other
+applications which will use them to access Directory services. Other applications may
+use them for their own purposes, but this will not constrain extensions and
+modifications needed to maintain or improve the Directory service.
+*/
 
 IMPORTS
-     basicAccessControl, certificateExtensions, id-asx, id-at, id-avr, id-ldx, id-lsx, id-mr, id-nf, id-oa, id-oc, id-sc, informationFramework, selectedAttributeTypes
-          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 8}
-     ATTRIBUTE, DistinguishedName, MATCHING-RULE, Name, NAME-FORM, OBJECT-CLASS, RelativeDistinguishedName, SYNTAX-NAME, top
-          FROM InformationFramework informationFramework
-     bitStringMatch, boolean, booleanMatch, caseExactMatch, commonName, directoryString, distinguishedNameMatch, generalizedTime, generalizedTimeMatch, generalizedTimeOrderingMatch, integer, integerMatch, integerOrderingMatch, objectIdentifierMatch, octetString, octetStringMatch, UnboundedDirectoryString, UniqueIdentifier, uri
-          FROM SelectedAttributeTypes selectedAttributeTypes
-     algorithmIdentifierMatch, certificateExactMatch, certificateListExactMatch, certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames, KeyUsage, CertificateAssertion, CertificateExactAssertion, CertificateListAssertion, CertificateListExactAssertion, CertificatePairAssertion,
-     CertificatePairExactAssertion
-          FROM CertificateExtensions certificateExtensions;
+     id-asx, id-at, id-ldx, id-lsx, id-mr, id-nf, id-oa, id-oc, id-sc
+          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 9} WITH SUCCESSORS
+     ATTRIBUTE, Attribute {}, DistinguishedName, distinguishedNameMatch, MATCHING-RULE, Name, NAME-FORM, OBJECT-CLASS, objectIdentifierMatch, RelativeDistinguishedName, SYNTAX-NAME, top
+          FROM InformationFramework {joint-iso-itu-t ds (5) module (1) informationFramework (1) 9} WITH SUCCESSORS
+     bitStringMatch, boolean, booleanMatch, caseExactMatch, commonName, directoryString, generalizedTime, generalizedTimeMatch, generalizedTimeOrderingMatch, integer, integerMatch, integerOrderingMatch, octetString, octetStringMatch, UnboundedDirectoryString, UniqueIdentifier, uri
+          FROM SelectedAttributeTypes {joint-iso-itu-t ds (5) module (1) selectedAttributeTypes (5) 9} WITH SUCCESSORS
+     algorithmIdentifierMatch, certificateExactMatch, certificateListExactMatch, certificatePairExactMatch, CertificatePoliciesSyntax, CertPolicyId, GeneralNames, KeyUsage, pkiPathMatch, policyMatch, CertificateAssertion, CertificateExactAssertion, CertificateListAssertion, CertificateListExactAssertion,
+     CertificatePairAssertion, CertificatePairExactAssertion
+          FROM CertificateExtensions {joint-iso-itu-t ds (5) module (1) certificateExtensions (26) 9} WITH SUCCESSORS;
 
 -- parameterized types
 SIGNATURE ::= SEQUENCE {
-    algorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
+    agorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
     signature      BIT STRING,
     ...
 }
 
 SIGNED {ToBeSigned} ::= SEQUENCE {
     toBeSigned     ToBeSigned,
-    COMPONENTS OF SIGNATURE,
-    ...
-}
+    algorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
+    signature      BIT STRING,
+    ...,
+    [[ 4:
+    altAlgorithmIdentifier AlgorithmIdentifier {{SupportedAltAlgorithms}} OPTIONAL,
+    altSignature   BIT STRING OPTIONAL
+    ]]
+} (WITH COMPONENTS {
+    ...,
+    altAlgorithmIdentifier PRESENT,
+    altSignature   PRESENT
+} | WITH COMPONENTS {
+    ...,
+    altAlgorithmIdentifier ABSENT,
+    altSignature   ABSENT
+})
 
 HASH {ToBeHashed} ::= SEQUENCE {
     algorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
@@ -44,7 +59,7 @@ HASH {ToBeHashed} ::= SEQUENCE {
 }
 
 ENCRYPTED {ToBeEnciphered} ::= BIT STRING (CONSTRAINED BY {
-         -- shall be the result of applying an encipherment procedure
+    -- shall be the result of applying an encipherment procedure
     -- to the BER-encoded octets of a value of --
     ToBeEnciphered
 })
@@ -55,12 +70,6 @@ ENCRYPTED-HASH {ToBeSigned} ::= BIT STRING (CONSTRAINED BY {
     ToBeSigned -- and then applying an encipherment procedure
 -- to those octets --
 })
-
-FINGERPRINT {ToBeFingerprinted} ::= SEQUENCE {
-    algorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
-    fingerprint    BIT STRING,
-    ...
-}
 
 ALGORITHM ::= CLASS {
     &Type             OPTIONAL,
@@ -76,9 +85,23 @@ AlgorithmIdentifier {ALGORITHM: SupportedAlgorithms} ::= SEQUENCE {
     ...
 }
 
-/* The definitions of the following information object set is deferred to referencing
+/* The definitions of the following information object sets are deferred to referencing
 specifications having a requirement for specific information object sets.*/
 SupportedAlgorithms ALGORITHM ::= {...}
+
+SupportedAltAlgorithms ALGORITHM ::= {...}
+
+FingerPrint {ToBeFingerprinted} ::= SEQUENCE {
+    algorithmIdentifier AlgorithmIdentifier {{SupportedAlgorithms}},
+    fingerprint    BIT STRING,
+    ...
+}
+
+ecPublicKey    ALGORITHM ::= { -- copied IETF RFC 5480
+    PARMS SupportedCurves IDENTIFIED BY id-ecPublicKey
+}
+
+id-ecPublicKey OBJECT IDENTIFIER ::= {iso (1) member-body (2) us (840) ansi-X9-62 (10045) keyType (2) 1}
 
 /* The definitions of the following information value set is deferred to referencing
 specifications having a requirement for specific value sets.*/
@@ -213,7 +236,6 @@ TBSCertAVL ::= SEQUENCE {
             entityGroup    DistinguishedName, -- only for constrained = FALSE
             ...
         },
-        scope          [0] IMPLICIT ScopeRestrictions OPTIONAL,
         entryExtensions [1] IMPLICIT Extensions OPTIONAL,
         ...
     },
@@ -226,8 +248,8 @@ AvlSerialNumber ::= INTEGER (0..MAX)
 
 PKCertIdentifier ::= CHOICE {
     issuerSerialNumber IssuerSerialNumber,
-    fingerprintPKC [0] IMPLICIT FINGERPRINT {Certificate},
-    fingerprintPK  [1] IMPLICIT FINGERPRINT {PublicKey},
+    fingerprintPKC [0] IMPLICIT FingerPrint {Certificate},
+    fingerprintPK  [1] IMPLICIT FingerPrint {PublicKey},
     ...
 }
 
@@ -236,20 +258,6 @@ IssuerSerialNumber ::= SEQUENCE {
     serialNumber   CertificateSerialNumber,
     ...
 }
-
-ScopeRestrictions ::= SEQUENCE OF ScopeRestriction
-
-SCOPE-RESTRICTION ::= TYPE-IDENTIFIER
-
-ScopeRestriction ::= SEQUENCE {
-    id             SCOPE-RESTRICTION.&id,
-    restriction    SCOPE-RESTRICTION.&Type,
-    ...
-}
-
-protRestrict   EXTENSION ::= {SYNTAX ProtRestriction IDENTIFIED BY id-protRestrict}
-
-ProtRestriction ::= SEQUENCE (SIZE (1..MAX)) OF OBJECT IDENTIFIER
 
 -- PKI object classes
 pkiUser        OBJECT-CLASS ::= {SUBCLASS OF {top} KIND auxiliary MAY CONTAIN {userCertificate} LDAP-NAME {"pkiUser"} LDAP-DESC "X.509 PKI User" ID id-oc-pkiUser}
@@ -287,7 +295,7 @@ CertificatePair ::= SEQUENCE {
 
 certificateRevocationList ATTRIBUTE ::= {WITH SYNTAX CertificateList EQUALITY MATCHING RULE certificateListExactMatch LDAP-SYNTAX x509CertificateList.&id LDAP-NAME {"certificateRevocationList"} LDAP-DESC "X.509 certificate revocation list" ID id-at-certificateRevocationList}
 
-eepkCertificateRevocationList ATTRIBUTE ::= {WITH SYNTAX CertificateList EQUALITY MATCHING RULE certificateListExactMatch LDAP-SYNTAX x509CertificateList.&id LDAP-NAME {"certificateRevocationList"} LDAP-DESC "X.509 EEPK certificate revocation list" ID id-at-eepkCertificateRevocationList}
+eepkCertificateRevocationList ATTRIBUTE ::= {WITH SYNTAX CertificateList EQUALITY MATCHING RULE certificateListExactMatch LDAP-SYNTAX x509CertificateList.&id LDAP-NAME {"eepkCertificateRevocationList"} LDAP-DESC "X.509 EEPK certificate revocation list" ID id-at-eepkCertificateRevocationList}
 
 authorityRevocationList ATTRIBUTE ::= {WITH SYNTAX CertificateList EQUALITY MATCHING RULE certificateListExactMatch LDAP-SYNTAX x509CertificateList.&id LDAP-NAME {"authorityRevocationList"} LDAP-DESC "X.509 authority revocation list" ID id-at-authorityRevocationList}
 
@@ -320,7 +328,7 @@ HashedPolicyInfo ::= POLICY.&Type ({Policies})
 
 Policies       POLICY ::= {...} -- Defined by implementors
 
-certificatePolicy ATTRIBUTE ::= {WITH SYNTAX PolicySyntax ID id-at-certificatePolicy}
+certificatePolicy ATTRIBUTE ::= {WITH SYNTAX PolicySyntax EQUALITY MATCHING RULE policyMatch ID id-at-certificatePolicy}
 
 PolicySyntax ::= SEQUENCE {
     policyIdentifier PolicyID,
@@ -330,9 +338,31 @@ PolicySyntax ::= SEQUENCE {
 
 PolicyID ::= CertPolicyId
 
-pkiPath        ATTRIBUTE ::= {WITH SYNTAX PkiPath ID id-at-pkiPath}
+pkiPath        ATTRIBUTE ::= {WITH SYNTAX PkiPath EQUALITY MATCHING RULE pkiPathMatch ID id-at-pkiPath}
+
+supportedPublicKeyAlgorithms ATTRIBUTE ::= {WITH SYNTAX SupportedPublicKeyAlgorithms EQUALITY MATCHING RULE algorithmIdentifierMatch LDAP-SYNTAX x509SupportedPublicKeyAlgos.&id LDAP-NAME {"supportedPublicKeyAlgorithms"} LDAP-DESC "X.509 supported publiv key algorithms" ID id-at-supportedPublicKeyAlgorithms}
+
+SupportedPublicKeyAlgorithms ::= SEQUENCE {
+    algorithmIdentifier AlgorithmIdentifier {{SupportedPublicKeyAlgos}},
+    minKeySize     INTEGER,
+    extensions     [0] SEQUENCE SIZE (1..MAX) OF OidOrAttr OPTIONAL,
+    ...
+}
+
+SupportedPublicKeyAlgos ALGORITHM ::= {...}
+
+OidOrAttr ::= CHOICE {
+    oid            ATTRIBUTE.&id ({ExtAttributes}),
+    attribute      Attribute {{ExtAttributes}},
+    ...
+}
+
+ExtAttributes  ATTRIBUTE ::= {...}
 
 userPassword   ATTRIBUTE ::= {WITH SYNTAX OCTET STRING (SIZE (0..MAX)) EQUALITY MATCHING RULE octetStringMatch LDAP-SYNTAX octetString.&id LDAP-NAME {"userPassword"} ID id-at-userPassword}
+
+-- LDAP attribute syntaxes defined by this Specification
+x509SupportedPublicKeyAlgos SYNTAX-NAME ::= {LDAP-DESC "X.509 supported publiv key algorithms" DIRECTORY SYNTAX SupportedPublicKeyAlgorithms ID id-asx-x509SupportedPublicKeyAlgos}
 
 -- LDAP syntaxes defined by IETF RFC 4523
 x509Certificate SYNTAX-NAME ::= {LDAP-DESC "X.509 Certificate" DIRECTORY SYNTAX Certificate ID id-lsx-x509Certificate}
@@ -385,7 +415,12 @@ id-at-pkiPath  OBJECT IDENTIFIER ::= {id-at 70}
 
 id-at-eepkCertificateRevocationList OBJECT IDENTIFIER ::= {id-at 101}
 
--- syntaxes
+id-at-supportedPublicKeyAlgorithms OBJECT IDENTIFIER ::= {id-at 103}
+
+-- Syntaxes defined by this Specification
+id-asx-x509SupportedPublicKeyAlgos OBJECT IDENTIFIER ::= {id-asx 10}
+
+-- LDAP defined syntaxes
 id-lsx-x509Certificate OBJECT IDENTIFIER ::= {id-lsx 8}
 
 id-lsx-x509CertificateList OBJECT IDENTIFIER ::= {id-lsx 9}
@@ -393,8 +428,5 @@ id-lsx-x509CertificateList OBJECT IDENTIFIER ::= {id-lsx 9}
 id-lsx-x509CertificatePair OBJECT IDENTIFIER ::= {id-lsx 10}
 
 id-lsx-x509SupportedAlgorithm OBJECT IDENTIFIER ::= {id-lsx 49}
-
--- Authorization validation restrictions
-id-protRestrict OBJECT IDENTIFIER ::= {id-avr 1}
 
 END -- AuthenticationFramework

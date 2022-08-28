@@ -1,4 +1,4 @@
-AlgorithmObjectIdentifiers {joint-iso-itu-t ds (5) module (1) algorithmObjectIdentifiers (8) 8}
+AlgorithmObjectIdentifiers {joint-iso-itu-t ds (5) module (1) algorithmObjectIdentifiers (8) 9}
 DEFINITIONS ::= BEGIN
 
 -- EXPORTS All
@@ -11,10 +11,10 @@ the label CSOR is used.
 */
 
 IMPORTS
-     algorithm, authenticationFramework
-          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 8}
+     algorithm
+          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 9} WITH SUCCESSORS
      ALGORITHM, AlgorithmIdentifier {}, SupportedAlgorithms, SupportedCurves
-          FROM AuthenticationFramework authenticationFramework;
+          FROM AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 9} WITH SUCCESSORS;
 
 ID ::= OBJECT IDENTIFIER
 
@@ -63,7 +63,7 @@ certicom-curve ID ::= {certicom curve (0)}
 
 teletrust      ID ::= {iso-organization teletrust (36)}
 
-ecStdCurvesAndGen ID ::= {teletrust algorithm (3) signaturealgorithm (3) ecSign (2) 8}
+ecStdCurvesAndGen ID ::= {teletrust algorithm (3) signature-algorithm (3) ecSign (2) 8}
 
 versionOne     ID ::= {ecStdCurvesAndGen ellipticCurve (1) versionOne (1)}
 
@@ -79,7 +79,7 @@ nistAlgorithms ID ::= {csor nistAlgorithm (4)} -- CSOR
 
 aes            ID ::= {nistAlgorithms 1} -- CSOR
 
-hashAlgs       ID ::= {nistAlgorithms 2} -- CSOR
+hashAlgs       ID ::= {nistAlgorithms hashalgs (2)} -- CSOR
 
 sigAlgs        ID ::= {nistAlgorithms 3} -- CSOR
 
@@ -123,6 +123,7 @@ dh-public-number ID ::= {ansi-x9-42 number-type (2) dh-public-number (1)} --IETF
 -- The OID for SHA hash algorithms are specified in NIST FIPS PUB 180-4
 id-sha1        ID ::= {iso (1) identified-organization (3) oiw (14) secsig (3) algorithms (2) 26} -- IETF RFC 3279
 
+-- SHA-2 family
 id-sha256      ID ::= {hashAlgs 1} -- CSOR
 
 id-sha384      ID ::= {hashAlgs 2} -- CSOR
@@ -134,6 +135,23 @@ id-sha224      ID ::= {hashAlgs 4} -- CSOR
 id-sha512-224  ID ::= {hashAlgs 5} -- CSOR
 
 id-sha512-256  ID ::= {hashAlgs 6} -- CSOR
+
+-- SHA-3 family
+id-sha3-224    ID ::= {hashAlgs 7} -- CSOR
+
+id-sha3-256    ID ::= {hashAlgs 8} -- CSOR
+
+id-sha3-384    ID ::= {hashAlgs 9} -- CSOR
+
+id-sha3-512    ID ::= {hashAlgs 10} -- CSOR
+
+id-shake128    ID ::= {hashAlgs 11} -- CSOR
+
+id-shake256    ID ::= {hashAlgs 12} -- CSOR
+
+id-shake128-len ID ::= {hashAlgs 17} -- CSOR
+
+id-shake256-len ID ::= {hashAlgs 18} -- CSOR
 
 hashAlg        ID ::= {iso (1) identified-organization (3) dod (6) internet (1) private (4) enterprise (1) kudelski (1722) cryptography (12) 2} -- BLAKE2, RFC 7693
 
@@ -150,7 +168,19 @@ sha512WithRSAEncryption ID ::= {pkcs-1 sha512WithRSAEncryption (13)}
 sha224WithRSAEncryption ID ::= {pkcs-1 sha224WithRSAEncryption (14)}
 
 -- RSASSA-PSS signature algorithm object identifiers (From IETF RFC 4055)
-ansi-x9-62 signatures (4) ecdsa-with-SHA2 (3) 1}
+id-RSASSA-PSS  ID ::= {pkcs-1 10}
+
+id-mgf1        ID ::= {pkcs-1 8}
+
+-- DSA algorithms object idntifiers
+id-dsa-with-sha1 ID ::= {iso (1) member-body (2) us (840) x9-57 (10040) x9algorithm (4) dsa-with-sha1 (3)}
+
+id-dsa-with-sha224 ID ::= {sigAlgs 1} -- CSOR
+
+id-dsa-with-sha256 ID ::= {sigAlgs 2} -- CSOR
+
+-- From IETF RFC 5758
+ecdsa-with-SHA224 ID ::= {ansi-x9-62 signatures (4) ecdsa-with-SHA2 (3) 1}
 
 ecdsa-with-SHA256 ID ::= {ansi-x9-62 signatures (4) ecdsa-with-SHA2 (3) 2}
 
@@ -239,11 +269,8 @@ mD5Algorithm   ALGORITHM ::= {PARMS NULL IDENTIFIED BY {iso (1) member-body (2) 
 -- Note that the MD5 algorithm is not considered secure
 sha1Algorithm  ALGORITHM ::= {PARMS NULL IDENTIFIED BY id-sha1}
 
--- Note that the SHA1 algorithm may not be considered secure
-sha224         ALGORITHM ::= { -- IETF RFC 5754
-    IDENTIFIED BY id-sha224
-}
-
+-- Note that the SHA1 algorithm is not considered secure
+-- SHA-2 family
 sha256         ALGORITHM ::= { -- IETF RFC 5754
     IDENTIFIED BY id-sha256
 }
@@ -256,7 +283,40 @@ sha512         ALGORITHM ::= { -- IETF RFC 5754
     IDENTIFIED BY id-sha512
 }
 
-HashAlgorithms ALGORITHM ::= {sha1Algorithm | sha224 | sha256 | sha384 | sha512}
+sha224         ALGORITHM ::= { -- IETF RFC 5754
+    IDENTIFIED BY id-sha224
+}
+
+sha512-224     ALGORITHM ::= {IDENTIFIED BY id-sha512-224}
+
+sha512-256     ALGORITHM ::= {IDENTIFIED BY id-sha512-256}
+
+-- SHA-3 family
+sha3-224       ALGORITHM ::= {IDENTIFIED BY id-sha3-224}
+
+sha3-256       ALGORITHM ::= {IDENTIFIED BY id-sha3-256}
+
+sha3-384       ALGORITHM ::= {IDENTIFIED BY id-sha3-384}
+
+sha3-512       ALGORITHM ::= {IDENTIFIED BY id-sha3-512}
+
+shake128       ALGORITHM ::= {IDENTIFIED BY id-shake128}
+
+shake256       ALGORITHM ::= {IDENTIFIED BY id-shake256}
+
+shake128-len   ALGORITHM ::= {PARMS ShakeOutputLen IDENTIFIED BY id-shake128-len}
+
+shake256-len   ALGORITHM ::= {PARMS ShakeOutputLen IDENTIFIED BY id-shake256-len}
+
+ShakeOutputLen ::= INTEGER -- Output length in bits
+
+HashAlgorithms ALGORITHM ::= {
+    sha1Algorithm |
+    sha224 |
+    sha256 |
+    sha384 |
+    sha512
+}
 
 -- Symmetric encryption algorithms
 aes128-CBC     ALGORITHM ::= { -- CSOR
@@ -347,13 +407,12 @@ sha512WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF RFC 7427
 }
 
 -- RSASA-PSS algorithms
-rSASSA-PSS     ALGORITHM ::= {
-    PARMS SEQUENCE {
-        hashAlgorithm [0] AlgorithmIdentifier {{HashAlgorithms}},
-        -- maskGenAlgorithm [1] AlgorithmIdentifier {{MaskGenAlgorithms}},
-        saltLength [2] INTEGER DEFAULT 20, trailerField [3] INTEGER DEFAULT 1
-    } IDENTIFIED BY id-RSASSA-PSS
-}
+rSASSA-PSS     ALGORITHM ::= {PARMS SEQUENCE {
+    hashAlgorithm  [0] AlgorithmIdentifier {{HashAlgorithms}},
+    -- maskGenAlgorithm [1] AlgorithmIdentifier {{MaskGenAlgorithms}},
+    saltLength     [2] INTEGER DEFAULT 20,
+    trailerField   [3] INTEGER DEFAULT 1
+} IDENTIFIED BY id-RSASSA-PSS}
 
 --
 -- DSA signature algorithms

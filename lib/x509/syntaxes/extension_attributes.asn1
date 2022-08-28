@@ -1,26 +1,23 @@
--- ISO/IEC 9594-8:2017 (E)
--- C.2 Formal specification for certificate extension attribute types
-
-ExtensionAttributes {joint-iso-itu-t ds (5) module (1) extensionAttributes (41) 8}
+ExtensionAttributes {joint-iso-itu-t ds (5) module (1) extensionAttributes (41) 9}
 DEFINITIONS ::= BEGIN
 
 -- EXPORTS All
 
 IMPORTS
      -- from Rec. ITU-T X.501 | ISO/IEC 9594-2
-     attributeCertificateDefinitions, authenticationFramework, certificateExtensions, extensionAttributes, id-ce, informationFramework
-          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 8}
+     id-ce
+          FROM UsefulDefinitions {joint-iso-itu-t ds (5) module (1) usefulDefinitions (0) 9} WITH SUCCESSORS
      ATTRIBUTE, SYNTAX-NAME
-          FROM InformationFramework informationFramework
+          FROM InformationFramework {joint-iso-itu-t ds (5) module (1) informationFramework (1) 9} WITH SUCCESSORS
      -- from Rec. ITU-T X.509 | ISO/IEC 9594-8
      EXTENSION
-          FROM AuthenticationFramework authenticationFramework
-     aAissuingDistributionPoint, authorityKeyIdentifier, authorizationValidation, baseUpdateTime, basicConstraints, certificateIssuer, certificatePolicies, cRLDistributionPoints, cRLNumber, cRLStreamIdentifier, deltaCRLIndicator, deltaInfo, expiredCertsOnCRL, extKeyUsage, freshestCRL, holdInstructionCode, invalidityDate,
-     issuerAltName, issuingDistributionPoint, keyUsage, nameConstraints, orderedList, policyConstraints, policyMappings, privateKeyUsagePeriod, reasonCode, revokedGroups, statusReferrals, subjectAltName, subjectDirectoryAttributes, subjectKeyIdentifier, toBeRevoked
-          FROM CertificateExtensions certificateExtensions
+          FROM AuthenticationFramework {joint-iso-itu-t ds (5) module (1) authenticationFramework (7) 9} WITH SUCCESSORS
+     aAissuingDistributionPoint, altSignatureAlgorithm, altSignatureValue, authorityKeyIdentifier, authorizationValidation, baseUpdateTime, basicConstraints, certificateIssuer, certificatePolicies, cRLDistributionPoints, cRLNumber, cRLStreamIdentifier, deltaCRLIndicator, deltaInfo, expiredCertsOnCRL, extKeyUsage, freshestCRL,
+     holdInstructionCode, invalidityDate, issuerAltName, issuingDistributionPoint, keyUsage, nameConstraints, orderedList, policyConstraints, policyMappings, privateKeyUsagePeriod, reasonCode, revokedGroups, statusReferrals, subjectAltName, subjectAltPublicKeyInfo, subjectDirectoryAttributes, subjectKeyIdentifier, toBeRevoked
+          FROM CertificateExtensions {joint-iso-itu-t ds (5) module (1) certificateExtensions (26) 9} WITH SUCCESSORS
      acceptableCertPolicies, acceptablePrivilegePolicies, allowedAttributeAssignments, attributeDescriptor, attributeMappings, authorityAttributeIdentifier, basicAttConstraints, delegatedNameConstraints, groupAC, holderNameConstraints, issuedOnBehalfOf, noAssertion, noRevAvail, roleSpecCertIdentifier, singleUse, sOAIdentifier,
      targetingInformation, timeSpecification, userNotice
-          FROM AttributeCertificateDefinitions attributeCertificateDefinitions;
+          FROM AttributeCertificateDefinitions {joint-iso-itu-t ds (5) module (1) attributeCertificateDefinitions (32) 9} WITH SUCCESSORS;
 
 ExtensionAttribute ::= SEQUENCE {
     type           ATTRIBUTE.&id,
@@ -138,6 +135,14 @@ a-holderNameConstraints ATTRIBUTE ::= {WITH SYNTAX holderNameConstraints.&ExtnTy
 
 a-aAissuingDistributionPoint ATTRIBUTE ::= {WITH SYNTAX aAissuingDistributionPoint.&ExtnType LDAP-SYNTAX id-asx-aAissuingDistributionPoint LDAP-NAME {"AA issuing distribution point"} ID id-ce-a-aAissuingDistributionPoint}
 
+a-protRestrict ATTRIBUTE ::= {WITH SYNTAX protRestrict.&ExtnType LDAP-SYNTAX id-asx-protRestrict LDAP-NAME {"Protocol restriction"} ID id-ce-a-protRestrict}
+
+a-subjectAltPublicKeyInfo ATTRIBUTE ::= {WITH SYNTAX subjectAltPublicKeyInfo.&ExtnType LDAP-SYNTAX id-asx-subjectAltPublicKeyInfo LDAP-NAME {"Subject alternative public key info"} ID id-ce-a-subjectAltPublicKeyInfo}
+
+a-altSignatureAlgorithm ATTRIBUTE ::= {WITH SYNTAX altSignatureAlgorithm.&ExtnType LDAP-SYNTAX id-asx-altSignatureAlgorithm LDAP-NAME {"Alternative signature algorithm"} ID id-ce-a-altSignatureAlgorithm}
+
+a-altSignatureValue ATTRIBUTE ::= {WITH SYNTAX altSignatureValue.&ExtnType LDAP-SYNTAX id-asx-altSignatureValue LDAP-NAME {"Alternative signature value"} ID id-ce-a-altSignatureValue}
+
 -- Object identifier for attribute types
 id-ce-a-subjectDirectoryAttributes OBJECT IDENTIFIER ::= {id-ce 9 1}
 
@@ -247,6 +252,14 @@ id-ce-a-holderNameConstraints OBJECT IDENTIFIER ::= {id-ce 69 1}
 
 id-ce-a-authorizationValidation OBJECT IDENTIFIER ::= {id-ce 70 1}
 
+id-ce-a-protRestrict OBJECT IDENTIFIER ::= {id-ce 71 1}
+
+id-ce-a-subjectAltPublicKeyInfo OBJECT IDENTIFIER ::= {id-ce 72 1}
+
+id-ce-a-altSignatureAlgorithm OBJECT IDENTIFIER ::= {id-ce 73 1}
+
+id-ce-a-altSignatureValue OBJECT IDENTIFIER ::= {id-ce 74 1}
+
 -- The list of object identifiers for LDAP syntaxes
 id-asx-subjectDirectoryAttributes OBJECT IDENTIFIER ::= {id-ce 9 2}
 
@@ -355,5 +368,13 @@ id-asx-attributeMappings OBJECT IDENTIFIER ::= {id-ce 68 2}
 id-asx-holderNameConstraints OBJECT IDENTIFIER ::= {id-ce 69 2}
 
 id-asx-authorizationValidation OBJECT IDENTIFIER ::= {id-ce 70 2}
+
+id-asx-protRestrict OBJECT IDENTIFIER ::= {id-ce 71 2}
+
+id-asx-subjectAltPublicKeyInfo OBJECT IDENTIFIER ::= {id-ce 72 2}
+
+id-asx-altSignatureAlgorithm OBJECT IDENTIFIER ::= {id-ce 73 2}
+
+id-asx-altSignatureValue OBJECT IDENTIFIER ::= {id-ce 74 2}
 
 END -- ExtensionAttributes
