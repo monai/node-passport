@@ -20,6 +20,7 @@ import cioChoice from '../lib/doc9309/templates/cio_choice.mjs';
 import ciaInfoTemplate from '../lib/doc9309/templates/cia_info.mjs';
 import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pace.mjs';
 import subjectPublicKeyInfoType from '../lib/x509/types/subject_public_key_info.mjs';
+import certificateType from '../lib/x509/types/certificate.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
 
 dotenv.config();
@@ -207,7 +208,7 @@ async function work(reader) {
   console.log(' <= Response');
   res = await readBinary(secureReader, 0x00, 0x100);
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { noTail: true });
+  printBer(res, { type: { children: [certificateType] }, noTail: true });
 
   console.log('= Select Certificate "Signature Key 2": 1f0a');
   res = await select(secureReader, 0x00, 0x00, { data: '1f0a', le: 0x100 });
@@ -219,7 +220,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { noTail: true });
+  printBer(res, { type: { children: [certificateType] }, noTail: true });
 }
 
 async function getChallenge(reader, le) {
