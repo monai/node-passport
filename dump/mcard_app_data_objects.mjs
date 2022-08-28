@@ -11,7 +11,7 @@ import { performPace } from '../lib/doc9309/perform_pace_old.mjs';
 import { main, printError } from './util.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
 import fciTemplate from '../lib/iso7816/templates/file_control_information/fci.mjs';
-import efDirTemplate from '../lib/pkcs15/templates/ef_dir.mjs';
+import efDirType from '../lib/pkcs15/templates/ef_dir.mjs';
 import privateKeyChoiceType from '../lib/pkcs15/templates/private_key_choice.mjs';
 import publicKeyChoiceType from '../lib/pkcs15/templates/public_key_choice.mjs';
 import certificateChoiceType from '../lib/pkcs15/templates/certificate_choice.mjs';
@@ -62,7 +62,7 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    printBer(res.data, { template: efDirTemplate });
+    printBer(res.data, { type: efDirType });
   }
 
   console.log('= Select EF.CardAccess: 011C');
