@@ -390,19 +390,19 @@ sha1WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF 7427
     PARMS NULL IDENTIFIED BY sha1WithRSAEncryption
 }
 
-sha224WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF RFC 5754
+sha224RSA      ALGORITHM ::= { -- IETF RFC 4055
     PARMS NULL IDENTIFIED BY sha224WithRSAEncryption
 }
 
-sha256WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF RFC 7427
+sha256RSA      ALGORITHM ::= { -- IETF RFC 4055
     PARMS NULL IDENTIFIED BY sha256WithRSAEncryption
 }
 
-sha384WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF RFC 7427
+sha384RSA      ALGORITHM ::= { -- IETF RFC 4055
     PARMS NULL IDENTIFIED BY sha384WithRSAEncryption
 }
 
-sha512WithRSAEncryptionAlgorithm ALGORITHM ::= { -- IETF RFC 7427
+sha512RSA      ALGORITHM ::= { -- IETF RFC 4055
     PARMS NULL IDENTIFIED BY sha512WithRSAEncryption
 }
 
