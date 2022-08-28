@@ -148,7 +148,6 @@ async function work(reader) {
   res = await readEntireBinary(secureReader, { le: 0xdf });
   printBer(res, { type: publicKeyChoiceType, noTail: true });
 
-
   console.log('= Select EF.CD: 1f03');
   res = await select(secureReader, 0x00, 0x00, { data: '1f03', le: 0x100 });
   if (!res.noError()) {
