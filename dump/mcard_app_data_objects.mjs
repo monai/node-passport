@@ -194,7 +194,7 @@ async function work(reader) {
 
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
-  printBer(res, { template: subjectPublicKeyInfoTemplate, noTail: true });
+  printBer(res, { type: { children: [subjectPublicKeyInfoType] }, noTail: true });
 
   console.log('= Select Certificate "Signature Key 1 QES": 1f06');
   res = await select(secureReader, 0x00, 0x00, { data: '1f06', le: 0x100 });
