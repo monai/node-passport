@@ -221,6 +221,20 @@ async function work(reader) {
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
   printBer(res, { type: { children: [certificateType] }, noTail: true });
+
+  console.log('= Select ICAO EF.DG14: 1f14');
+  res = await select(secureReader, 0x00, 0x00, { data: '1f14', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  console.log(res.toString('hex'));
+  printBer(res, { noForce: true, noTail: true });
+
 }
 
 async function getChallenge(reader, le) {
