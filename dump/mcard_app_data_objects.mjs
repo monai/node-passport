@@ -66,6 +66,22 @@ async function work(reader) {
     printBer(res.data, { type: efDirType });
   }
 
+  console.log('= Select EF.ATR/INFO: 2F01');
+  res = await select(simpleReader, 0x00, 0x00, { data: '2F01', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readBinary(simpleReader, 0x00, 0x100);
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { type: efDirType });
+  }
+
   console.log('= Select EF.CardAccess: 011C');
   res = await select(simpleReader, 0x00, 0x00, { data: '011C', le: 0x100 });
   if (!res.noError()) {
