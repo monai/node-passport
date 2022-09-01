@@ -251,6 +251,73 @@ async function work(reader) {
   console.log(res.toString('hex'));
   printBer(res, { noForce: true, noTail: true });
 
+  console.log('= Select File: df01');
+  res = await select(secureReader, 0x08, 0x00, { data: 'df01', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log('= Select ICAO EF.DG1: 0101');
+  res = await select(secureReader, 0x00, 0x00, { data: '0101', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  printBer(res, { noTail: true });
+
+  console.log('= Select ICAO EF.DG2: 0102');
+  res = await select(secureReader, 0x00, 0x00, { data: '0102', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  printBer(res, { noTail: true });
+
+  console.log('= Select ICAO EF.DG11: 010B');
+  res = await select(secureReader, 0x00, 0x00, { data: '010B', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  printBer(res, { noTail: true });
+
+  console.log('= Select ICAO EF.DG14: 010E');
+  res = await select(secureReader, 0x00, 0x00, { data: '010E', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  printBer(res, { noForce: true, noTail: true });
+
+  console.log('= Select ICAO EF.SOD: 011D');
+  res = await select(secureReader, 0x00, 0x00, { data: '011D', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  res = await readEntireBinary(secureReader, { le: 0xdf });
+  printBer(res, { noForce: true, noTail: true });
 }
 
 async function getChallenge(reader, le) {
