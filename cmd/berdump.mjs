@@ -3,6 +3,7 @@ import { pipeline, Transform } from 'stream';
 import minimist from 'minimist';
 import { consoleLog } from 'stream-util2';
 
+import hex from '../lib/util/hex.mjs';
 import ParserStream from '../lib/asn1/ber/parser_stream.mjs';
 import TreeStream from '../lib/asn1/tree/stream.mjs';
 import TreeInspectStream from '../lib/asn1/tree/inspect_stream.mjs';
@@ -38,7 +39,7 @@ function main(argv) {
 }
 
 function fromHex(buf) {
-  return Buffer.from(buf.toString(), 'hex');
+  return hex`${buf}`;
 }
 
 function transform(fn, objectMode) {
