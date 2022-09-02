@@ -83,6 +83,6 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    console.log(res);
+    console.log(res.data.length, res);
   }
 }
