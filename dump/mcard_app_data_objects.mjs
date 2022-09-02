@@ -1,4 +1,3 @@
-/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 import dotenv from 'dotenv';
 import SimpleReader from '../lib/simple_reader.mjs';
