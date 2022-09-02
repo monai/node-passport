@@ -72,7 +72,13 @@ function unprotect(session) {
       const papdu = CommandApdu.from(packet.data);
 
       if (packet.data[0] & 0x0c) {
-        const apdu = unprotectCommandApdu(session, papdu);
+        console.log(papdu);
+        let apdu;
+        try {
+          apdu = unprotectCommandApdu(session, papdu);
+        } catch (ex) {
+          apdu = papdu;
+        }
 
         out.apdu = apdu;
         out.protectedApdu = papdu;
@@ -84,7 +90,13 @@ function unprotect(session) {
       const papdu = new ResponseApdu(packet.data);
 
       if (state.sm) {
-        const apdu = unprotectResponseApdu(session, papdu);
+        let apdu;
+
+        try {
+          apdu = unprotectResponseApdu(session, papdu);
+        } catch (ex) {
+          apdu = papdu;
+        }
 
         out.apdu = apdu;
         out.protectedApdu = papdu;
