@@ -72,7 +72,6 @@ function unprotect(session) {
       const papdu = CommandApdu.from(packet.data);
 
       if (packet.data[0] & 0x0c) {
-        console.log(papdu);
         let apdu;
         try {
           apdu = unprotectCommandApdu(session, papdu);
