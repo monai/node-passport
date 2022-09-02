@@ -3,4 +3,4 @@
 
 import packetdump from '../cmd/packetdump.mjs';
 
-packetdump(...process.argv.slice(1));
+packetdump(process.argv.slice(1));

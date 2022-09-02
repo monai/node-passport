@@ -2,18 +2,34 @@
 /* eslint-disable no-underscore-dangle */
 import { createRequire } from 'module';
 import { basename, resolve } from 'path';
+import minimist from 'minimist';
 import CommandApdu from '../lib/iso7816/command_apdu.mjs';
 import ResponseApdu from '../lib/iso7816/response_apdu.mjs';
 import Session from '../lib/doc9309/session.mjs';
 import { unprotectCommandApdu, unprotectResponseApdu } from '../lib/doc9309/sm.mjs';
 
-export default function main(program, filename) {
-  if (!filename) {
-    console.log(`Usage: ${program} FILE\n\nFile pattern: algorithm-kEnc-kMac-name.json`);
+export default function main(argv) {
+  const args = minimist(
+    argv.slice(1),
+    {
+      alias: {
+        skip: ['s'],
+        help: ['h'],
+      },
+      default: {
+        skip: 0,
+      },
+    },
+  );
+
+  if (args.help || args._.length === 0) {
+    console.log(`Usage: ${argv[0]} FILE\n`);
+    console.log('  -s,  --skip=NUMBER       Skip NUMBER lines\n');
+    console.log('File pattern: algorithm-kEnc-kMac-name.json');
     process.exit(0);
   }
 
-  filename = resolve(process.cwd(), process.argv[2]);
+  const filename = resolve(process.cwd(), args._[0]);
   const [algorithm, kEnc, kMac] = basename(filename).split('-');
 
   const session = new Session(
@@ -26,6 +42,7 @@ export default function main(program, filename) {
   // eslint-disable-next-line global-require, import/no-dynamic-require, no-undef
   require(filename)
     .map(prepare)
+    .slice(args.skip)
     .reduce(concat, [])
     .reduce(unprotect(session), {
       sm: false,
@@ -110,8 +127,9 @@ function unprotect(session) {
   };
 }
 
-function print(chunk) {
+function print(chunk, index) {
   const directions = ['>', '<'];
+  const indexLabel = index.toString().padStart(3, '0');
 
-  console.log(`${directions[chunk.packet.direction]} ${chunk.apdu.toDebugString()}`);
+  console.log(`${indexLabel} ${directions[chunk.packet.direction]} ${chunk.apdu.toDebugString()}`);
 }
