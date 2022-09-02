@@ -5,8 +5,8 @@ import SecureReader from '../lib/secure_reader.mjs';
 import select from '../lib/iso7816/select.mjs';
 import readEntireBinary from '../lib/iso7816/read_entire_binary.mjs';
 import CommandApdu from '../lib/iso7816/command_apdu.mjs';
-// import performPace from '../lib/doc9309/perform_pace.mjs';
-import { performPace } from '../lib/doc9309/perform_pace_old.mjs';
+import performPace from '../lib/doc9309/perform_pace.mjs';
+// import { performPace } from '../lib/doc9309/perform_pace_old.mjs';
 import { main, printError } from './util.mjs';
 import printBer from '../lib/asn1/util/print_ber.mjs';
 import fciTemplate from '../lib/iso7816/templates/file_control_information/fci.mjs';
@@ -105,6 +105,7 @@ async function work(reader) {
     reference: 'id-CAN',
     protocol: 'id-PACE-ECDH-GM-AES-CBC-CMAC-128',
     standardizedDomainParametersId: 12,
+    generalAuthenticateLe: 0x80,
   });
   const secureReader = new SecureReader(reader, session);
 
