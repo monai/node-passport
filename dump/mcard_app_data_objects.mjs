@@ -55,7 +55,7 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    printBer(res.data, { template: fciTemplate });
+    printBer(res.data, { noTail: true, template: fciTemplate });
   }
 
   console.log(' <= Response');
