@@ -63,7 +63,7 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    printBer(res.data, { type: efDirType });
+    printBer(res.data, { noForce: true, type: efDirType });
   }
 
   console.log('= Select EF.ATR/INFO: 2F01');
