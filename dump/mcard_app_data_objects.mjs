@@ -79,7 +79,7 @@ async function work(reader) {
   if (!res.noError()) {
     printError(res.toError());
   } else {
-    printBer(res.data, { type: efAtrInfoType });
+    printBer(res.data, { noTail: true, type: efAtrInfoType });
   }
 
   console.log('= Select EF.CardAccess: 011C');
