@@ -103,7 +103,7 @@ function unprotect(session) {
         out.apdu = papdu;
       }
     } else if (packet.direction === 1) {
-      const papdu = new ResponseApdu(packet.data);
+      const papdu = ResponseApdu.fromBuffer(packet.data);
 
       if (state.sm) {
         let apdu;
