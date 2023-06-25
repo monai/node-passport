@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 import Iso7816Error from './iso7816_error.mjs';
 
-class ResponseApdu {
+export default class ResponseApdu {
   static noError = 0x9000;
   static status6282 = 0x6282;
 
@@ -82,5 +82,3 @@ class ResponseApdu {
     return `<${this.constructor.name} ${this.toDebugString()}>`;
   }
 }
-
-export default ResponseApdu;
