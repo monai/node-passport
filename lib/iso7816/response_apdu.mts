@@ -48,7 +48,7 @@ export default class ResponseApdu {
       return true;
     }
 
-    if (this.sw === ResponseApdu.status6282 && (this.data?.length ?? -1 > 0)) {
+    if (this.sw === ResponseApdu.status6282 && ((this.data?.length ?? -1) > 0)) {
       return true;
     }
 
