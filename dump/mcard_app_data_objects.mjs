@@ -31,6 +31,7 @@ async function work(reader) {
 
   const simpleReader = new SimpleReader(reader);
   let res;
+  let apdu;
 
   await reader.connect({ share_mode: reader.reader.SCARD_SHARE_SHARED });
 
@@ -80,6 +81,15 @@ async function work(reader) {
     printError(res.toError());
   } else {
     printBer(res.data, { noTail: true, type: efAtrInfoType });
+  }
+
+  apdu = new CommandApdu(0x00, 0xb1, 0x2f, 0x01, { le: 0x100 });
+  console.log('= Initial access data', apdu.toDebugString());
+  res = await simpleReader.transmit(apdu);
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data);
   }
 
   console.log('= Select EF.CardAccess: 011C');
