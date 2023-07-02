@@ -22,6 +22,7 @@ import securityInfosForPace from '../lib/doc9309/templates/security_infos_for_pa
 import subjectPublicKeyInfoType from '../lib/x509/types/subject_public_key_info.mjs';
 import certificateType from '../lib/x509/types/certificate.mjs';
 import readBinary from '../lib/iso7816/read_binary.mjs';
+import readRecord from '../lib/iso7816/read_record.mjs';
 
 dotenv.config();
 
@@ -329,6 +330,103 @@ async function work(reader) {
   console.log(' <= Response');
   res = await readEntireBinary(secureReader, { le: 0xdf });
   printBer(res, { noForce: true, noTail: true });
+
+  console.log('= Select MF: 3F00');
+  res = await select(simpleReader, 0x00, 0x00, { data: '3F00', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  const pin = Buffer.from(process.env.LITEID_2021_PIN);
+  console.log('= Perform PACE');
+  const sessionPin = await performPace(simpleReader, {
+    password: pin,
+    passwordType: 'id-PIN',
+    reference: 'id-PIN',
+    protocol: 'id-PACE-ECDH-GM-AES-CBC-CMAC-128',
+    standardizedDomainParametersId: 12,
+    generalAuthenticateLe: 0x80,
+  });
+  const secureReaderPin = new SecureReader(reader, sessionPin);
+
+  console.log('= Select File: df02');
+  res = await select(secureReaderPin, 0x08, 0x00, { data: 'df02', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log('= Select: ACE1');
+  res = await select(secureReaderPin, 0x00, 0x00, { data: 'ACE1', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  console.log(' <= Response');
+  for (let i = 0; i < 5; i += 1) {
+    res = await readRecord(secureReaderPin, i, 0x04, { le: 0xdf });
+    if (!res.noError()) {
+      printError(res.toError());
+    } else {
+      printBer(res.data, { template: fciTemplate });
+    }
+  }
+
+  console.log('= Select: ACE2');
+  res = await select(secureReaderPin, 0x00, 0x00, { data: 'ACE2', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  for (let i = 0; i < 5; i += 1) {
+    res = await readRecord(secureReaderPin, i, 0x04, { le: 0xdf });
+    if (!res.noError()) {
+      printError(res.toError());
+    } else {
+      printBer(res.data, { template: fciTemplate });
+    }
+  }
+
+  console.log('= Select: ACE3');
+  res = await select(secureReaderPin, 0x00, 0x00, { data: 'ACE3', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  for (let i = 0; i < 6; i += 1) {
+    res = await readRecord(secureReaderPin, i, 0x04, { le: 0xdf });
+    if (!res.noError()) {
+      printError(res.toError());
+    } else {
+      printBer(res.data, { template: fciTemplate });
+    }
+  }
+
+  console.log('= Select: ACE4');
+  res = await select(secureReaderPin, 0x00, 0x00, { data: 'ACE4', le: 0x100 });
+  if (!res.noError()) {
+    printError(res.toError());
+  } else {
+    printBer(res.data, { template: fciTemplate });
+  }
+
+  for (let i = 0; i < 6; i += 1) {
+    res = await readRecord(secureReaderPin, i, 0x04, { le: 0xdf });
+    if (!res.noError()) {
+      printError(res.toError());
+    } else {
+      printBer(res.data, { template: fciTemplate });
+    }
+  }
 }
 
 async function getChallenge(reader, le) {
